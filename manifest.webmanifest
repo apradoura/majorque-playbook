@@ -1,11 +1,11 @@
 {
-  "name": "Majorque 2026 - Assistant familial",
-  "short_name": "Majorque",
-  "start_url": "./index.html",
+  "name": "Kairos Travel - Majorque",
+  "short_name": "Kairos Majorque",
+  "start_url": "./index.html#dashboard",
   "display": "standalone",
   "background_color": "#f4f1ea",
   "theme_color": "#0f3d3e",
-  "description": "Assistant local et offline-first pour le séjour familial à Majorque.",
+  "description": "Compagnon de séjour familial à Majorque : agenda, météo, mer, lieux, recommandations et espace Papa.",
   "id": "./",
   "scope": "./",
   "icons": [

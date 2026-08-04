@@ -41,9 +41,19 @@ function refreshDistances(origin){
  });
 }
 
+function activatePanel(hash, scroll=true){
+ const id=(hash||location.hash||'#dashboard').replace('#','')||'dashboard';
+ const target=$(id)||$('dashboard');
+ $$('.app-panel').forEach(sec=>sec.classList.toggle('active-panel',sec===target));
+ $$('.navbtn').forEach(x=>x.classList.toggle('active',x.getAttribute('href')==='#'+target.id));
+ if(scroll) window.scrollTo({top:0,behavior:'instant'});
+}
 function setupNavigation(){
- $$('.navbtn').forEach(a=>a.addEventListener('click',()=>{$$('.navbtn').forEach(x=>x.classList.remove('active'));a.classList.add('active');}));
- window.addEventListener('hashchange',()=>{const h=location.hash||'#dashboard';$$('.navbtn').forEach(x=>x.classList.toggle('active',x.getAttribute('href')===h));});
+ $$('.navbtn, .home-action-grid a[href^="#"], a[href="#spots"]').forEach(a=>a.addEventListener('click',e=>{
+  const h=a.getAttribute('href'); if(!h||!h.startsWith('#'))return; e.preventDefault(); history.replaceState(null,'',h); activatePanel(h);
+ }));
+ window.addEventListener('hashchange',()=>activatePanel(location.hash));
+ activatePanel(location.hash||'#dashboard',false);
 }
 function setupChecksAndFavorites(){
  $$('[data-check]').forEach(el=>{const k='check_'+el.dataset.check;el.checked=localStorage.getItem(k)==='1';el.addEventListener('change',()=>localStorage.setItem(k,el.checked?'1':'0'));});
@@ -106,12 +116,28 @@ function crowdPenalty(c){return c==='high'?22:c==='medium'?9:0;}
 function timeOfDay(){const h=new Date().getHours();return h<11?'matin':h<17?'après-midi':h<20?'fin de journée':'soir';}
 function candidateScore(card,mood,duration){const dest={lat:+card.dataset.lat,lon:+card.dataset.lon},km=haversineKm(nowOrigin,dest),type=card.dataset.type,crowd=card.dataset.crowd;let score=100-Math.min(55,km*2.1)-crowdPenalty(crowd);const allowed=typeMood[mood]||[];if(mood!=='auto'&&!allowed.includes(type))score-=40;const tod=timeOfDay();if(tod==='soir'&&(type==='Port'||type==='Ville'))score+=24;if(tod==='matin'&&(type==='Plage'||type==='Village'))score+=12;if(duration<=2&&km>12)score-=35;if(duration<=4&&km>28)score-=24;if(currentConditions.rain>=3&&(type==='Plage'||type==='Expérience'))score-=45;if((currentConditions.gust>=45||currentConditions.wind>=30||currentConditions.wave>=1.2)&&mood==='mer')score-=60;if(mood==='auto'&&currentConditions.wind<=16&&currentConditions.wave<0.6&&(type==='Plage'||type==='Expérience'))score+=18;return{score,km};}
 function renderNow(){
- const duration=+$('nowDuration')?.value||4,mood=$('nowMood')?.value||'auto',box=$('nowResults'),status=$('nowStatus');if(!box)return;
- const cards=$$('#spotsGrid .spot[data-lat]').map(card=>({card,...candidateScore(card,mood,duration)})).sort((a,b)=>b.score-a.score).slice(0,3);
- box.innerHTML=cards.map((x,i)=>{const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:+c.dataset.lat,lon:+c.dataset.lon},route=mapsDirections(dest,nowOrigin,c.dataset.travelmode||'driving'),type=c.dataset.type,crowd=c.dataset.crowd;const reasons=[`${formatDistance(x.km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`,crowd==='low'?'plutôt respirable':crowd==='medium'?'fréquenté mais gérable':'très fréquenté : horaire décisif'];if(type==='Plage'&&currentConditions.wave<0.7)reasons.push('mer annoncée calme');return `<article class="card now-option"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a><a class="link alt" href="#spots">Voir les lieux</a></div></article>`;}).join('');
- if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
- box.scrollIntoView({behavior:'smooth',block:'nearest'});
+ const box=$('nowResults'),status=$('nowStatus');
+ try{
+  const duration=Number($('nowDuration')?.value||4),mood=$('nowMood')?.value||'auto';
+  if(!box) throw new Error('Zone de résultats introuvable');
+  const source=$$('#spotsGrid .spot[data-lat]');
+  if(!source.length) throw new Error('Aucun lieu disponible');
+  const cards=source.map(card=>({card,...candidateScore(card,mood,duration)})).filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score).slice(0,3);
+  if(!cards.length) throw new Error('Aucune option compatible');
+  box.innerHTML=cards.map((x,i)=>{
+   const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:Number(c.dataset.lat),lon:Number(c.dataset.lon)},route=mapsDirections(dest,nowOrigin,c.dataset.travelmode||'driving'),type=c.dataset.type||'Lieu',crowd=c.dataset.crowd||'medium';
+   const reasons=[`${formatDistance(x.km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`,crowd==='low'?'plutôt respirable':crowd==='medium'?'fréquenté mais gérable':'très fréquenté : horaire décisif'];
+   if(type==='Plage'&&Number(currentConditions.wave||0)<0.7)reasons.push('mer annoncée calme');
+   return `<article class="card now-option"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a><button class="link alt" type="button" onclick="history.replaceState(null,'','#spots');window.KairosApp.activatePanel('#spots')">Voir les lieux</button></div></article>`;
+  }).join('');
+  if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
+ }catch(err){
+  if(box)box.innerHTML=`<article class="card full"><h3>Impossible de calculer les options</h3><p>${err.message||'Erreur inconnue'}</p><button class="btn small" type="button" onclick="location.reload()">Recharger l’app</button></article>`;
+  if(status)status.innerHTML='<strong>Erreur :</strong> la recommandation n’a pas pu être calculée.';
+  console.error('renderNow',err);
+ }
 }
+window.KairosApp={renderNow,activatePanel};
 function setupNow(){
  $('nowGo')?.addEventListener('click',renderNow);
  $('nowHotel')?.addEventListener('click',()=>{nowOrigin=HOTEL;$('nowHotel')?.classList.add('active');$('nowHere')?.classList.remove('active');renderNow();});
@@ -124,7 +150,7 @@ function setupShare(){if(navigator.share&&!document.querySelector('[data-share-a
 function highlightToday(){const fmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(new Date()).toLowerCase();$$('#agendaGrid .day-date').forEach(d=>d.closest('.day')?.classList.toggle('today-agenda',d.textContent.toLowerCase().includes(fmt)));}
 function runDiagnostics(){const tests=[];const t=(name,ok,detail='')=>tests.push({name,ok,detail});t('Bouton 3 options',!!$('nowGo')&&typeof renderNow==='function');t('Cartes de lieux',$$('#spotsGrid .spot[data-lat]').length>=10,`${$$('#spotsGrid .spot[data-lat]').length} fiches`);t('Liens d’itinéraire',$$('.route-link[href^="https://www.google.com/maps/"]').length===$$('.route-link').length);t('Filtres',$$('.filter-radio').length>=4);t('Géolocalisation',!!navigator.geolocation,location.protocol);t('Météo',typeof fetch==='function');t('Espace Papa',!!$('unlockPapa')&&!!$('papaPanel'));const badLinks=$$('a[href]').filter(a=>!a.getAttribute('href')||a.getAttribute('href')==='#');t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');const box=$('diagnosticsResults');if(box){box.hidden=false;box.innerHTML=tests.map(x=>`<div class="metric"><span>${x.ok?'✅':'❌'} ${x.name}</span><strong>${x.detail|| (x.ok?'OK':'À corriger')}</strong></div>`).join('');}if($('diagnosticsText'))$('diagnosticsText').textContent=tests.every(x=>x.ok)?'Toutes les fonctions essentielles sont chargées.':'Une anomalie a été détectée.';return tests;}
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=11');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
 function init(){setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}
