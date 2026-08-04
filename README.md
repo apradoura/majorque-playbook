@@ -19,3 +19,11 @@ Assistant de voyage familial installable en PWA.
 4. Ouvrir ensuite l'icône **Majorque**.
 
 Code de l'espace Papa : `1011`.
+
+
+## Itération 2
+- Recherche instantanée
+- Filtre favoris
+- Espace Papa robuste
+- Partage natif
+- Mise en évidence du jour

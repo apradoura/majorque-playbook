@@ -59,3 +59,46 @@ if(els('weatherHere'))els('weatherHere').addEventListener('click',()=>{if(!navig
 loadLiveWeather(LIVE_DEFAULT);
 
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+// Iteration 2: recherche, favoris, espace Papa robuste et partage
+const spotSearch=document.getElementById('spotSearch');
+const favoritesOnly=document.getElementById('favoritesOnly');
+const clearSearch=document.getElementById('clearSearch');
+const spotsEmpty=document.getElementById('spotsEmpty');
+let favOnly=false;
+function applySpotSearch(){
+  const q=(spotSearch?.value||'').trim().toLowerCase();
+  let shown=0;
+  document.querySelectorAll('#spotsGrid .spot').forEach(card=>{
+    const key='fav_'+card.querySelector('.favbtn')?.dataset.fav;
+    const matchesText=!q || card.textContent.toLowerCase().includes(q) || (card.dataset.name||'').includes(q);
+    const matchesFav=!favOnly || localStorage.getItem(key)==='1';
+    const cssHidden=getComputedStyle(card).display==='none';
+    card.classList.toggle('search-hidden',!(matchesText&&matchesFav));
+    card.style.visibility='';
+    card.style.position='';
+    if(matchesText&&matchesFav&&!cssHidden)shown++;
+  });
+  if(spotsEmpty)spotsEmpty.style.display=shown?'none':'block';
+}
+if(spotSearch)spotSearch.addEventListener('input',applySpotSearch);
+if(favoritesOnly)favoritesOnly.addEventListener('click',()=>{favOnly=!favOnly;favoritesOnly.classList.toggle('active',favOnly);favoritesOnly.textContent=favOnly?'★ Favoris seulement':'☆ Favoris seulement';applySpotSearch()});
+if(clearSearch)clearSearch.addEventListener('click',()=>{if(spotSearch)spotSearch.value='';favOnly=false;if(favoritesOnly){favoritesOnly.classList.remove('active');favoritesOnly.textContent='☆ Favoris seulement'}applySpotSearch()});
+document.querySelectorAll('.filter-radio').forEach(x=>x.addEventListener('change',()=>setTimeout(applySpotSearch,0)));
+document.querySelectorAll('.favbtn').forEach(btn=>btn.addEventListener('click',()=>setTimeout(applySpotSearch,0)));
+const extraStyle=document.createElement('style');extraStyle.textContent='.spot.search-hidden{display:none!important}';document.head.appendChild(extraStyle);
+
+const papaCode=document.getElementById('papaCode'),unlockPapa=document.getElementById('unlockPapa'),papaPanel=document.getElementById('papaPanel'),papaError=document.getElementById('papaError'),papaHint=document.getElementById('papaHint');
+function setPapa(open){if(!papaPanel)return;papaPanel.classList.toggle('visible',open);if(papaHint)papaHint.textContent=open?'Espace Papa déverrouillé sur cet appareil.':'Le code reste mémorisé sur cet appareil.';if(papaError)papaError.classList.remove('visible')}
+function tryPapa(){const ok=(papaCode?.value||'')==='1011';setPapa(ok);if(ok){sessionStorage.setItem('papaUnlocked','1');toast('Espace Papa déverrouillé')}else if(papaError)papaError.classList.add('visible')}
+if(unlockPapa)unlockPapa.addEventListener('click',tryPapa);
+if(papaCode)papaCode.addEventListener('keydown',e=>{if(e.key==='Enter')tryPapa()});
+if(sessionStorage.getItem('papaUnlocked')==='1')setPapa(true);
+
+// Surligne la journée correspondant à la date du séjour lorsqu'elle existe.
+const now=new Date();
+const fmt=new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long'}).format(now).toLowerCase();
+document.querySelectorAll('#agendaGrid .day-date').forEach(d=>{if(fmt.includes(d.textContent.toLowerCase().replace('mercredi ','').replace('jeudi ','').replace('vendredi ','').replace('samedi ','').replace('dimanche ','').replace('lundi ','').replace('mardi ',''))){d.closest('.day')?.classList.add('today-agenda')}});
+
+if(navigator.share){
+  const share=document.createElement('button');share.className='btn secondary';share.textContent='Partager l’app';share.addEventListener('click',()=>navigator.share({title:document.title,text:'Notre assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(share);
+}
