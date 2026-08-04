@@ -220,19 +220,19 @@ function setupPapa(){
   panel?.classList.toggle('visible',open);
   panel?.setAttribute('aria-hidden',open?'false':'true');
   if(lock) lock.hidden=open;
-  if(hint) hint.textContent=open?'Espace Papa déverrouillé pour cette session.':'Code à 4 chiffres.';
+  if(hint) hint.textContent=open?'Espace Papa déverrouillé.':'Code à 4 chiffres.';
   error?.classList.remove('visible');
   if(!open&&code) code.value='';
  };
  const attempt=()=>{
   const ok=(code?.value||'').trim()==='1011';
-  if(ok){sessionStorage.setItem('papaUnlocked','1');set(true);toast('Espace Papa déverrouillé');}
+  if(ok){set(true);toast('Espace Papa déverrouillé');}
   else{set(false);error?.classList.add('visible');code?.focus();}
  };
  $('unlockPapa')?.addEventListener('click',attempt);
- $('lockPapa')?.addEventListener('click',()=>{sessionStorage.removeItem('papaUnlocked');set(false);toast('Espace Papa verrouillé');});
+ $('lockPapa')?.addEventListener('click',()=>{set(false);toast('Espace Papa verrouillé');});
  code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}});
- set(sessionStorage.getItem('papaUnlocked')==='1');
+ set(false);
 }
 function setupShare(){if(navigator.share&&!document.querySelector('[data-share-app]')){const b=document.createElement('button');b.className='btn secondary';b.dataset.shareApp='1';b.textContent='Partager l’app';b.addEventListener('click',()=>navigator.share({title:document.title,text:'Assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(b);}}
 function highlightToday(){const fmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(new Date()).toLowerCase();$$('#agendaGrid .day-date').forEach(d=>d.closest('.day')?.classList.toggle('today-agenda',d.textContent.toLowerCase().includes(fmt)));}
@@ -261,9 +261,9 @@ function runDiagnostics(){
  return tests;
 }
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.2');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.3');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
-function init(){setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}
+function init(){document.body.classList.add('js-ready');setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

@@ -1,8 +1,6 @@
-# Changelog
+# 1.0.4
 
-## 1.0.2
-- Correction critique : le contenu Papa reste masque tant que le code 1011 n'est pas valide.
-- Le formulaire de code disparait apres deverrouillage.
-- Ajout d'un bouton Verrouiller.
-- Messages d'erreur et attributs d'accessibilite corriges.
-- Audit fonctionnel des onglets, filtres, geolocalisation, recommandations, favoris, carte et liens.
+- Correction des sélecteurs CSS des onglets (`.app section.app-panel`).
+- Vérification réelle de chaque onglet dans Chromium.
+- Espace Papa verrouillé à chaque ouverture, sans mémorisation de session.
+- Code incorrect : contenu masqué. Code 1011 : contenu affiché. Bouton Verrouiller : contenu masqué.
