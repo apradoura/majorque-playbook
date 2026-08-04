@@ -1,4 +1,4 @@
-# Kairos Travel - Majorque 1.0.0
+# Kairos Travel - Majorque 1.0.2
 
 Version stable pour GitHub Pages.
 

@@ -111,10 +111,76 @@ function setupWeather(){
  $('weatherHere')?.addEventListener('click',()=>requestPosition(p=>loadLiveWeather({lat:p.coords.latitude,lon:p.coords.longitude,name:'votre position'}),err=>{$('locationHelp')?.setAttribute('open','');toast(geolocationMessage(err),3500);}));
  loadLiveWeather(LIVE_DEFAULT);
 }
-const typeMood={plage:['Plage'],culture:['Ville','Village','Port'],marche:['Plage','Ville','Village','Port'],mer:['Plage','Expérience','Port'],soir:['Port','Ville','Plage']};
-function crowdPenalty(c){return c==='high'?22:c==='medium'?9:0;}
+const moodConfig={
+ auto:{label:'Kairos',types:[]},
+ plage:{label:'Plage / baignade',types:['Plage']},
+ culture:{label:'Découverte / village',types:['Ville','Village','Port']},
+ marche:{label:'Marcher',types:['Plage','Ville','Village','Port'],walkingOnly:true},
+ mer:{label:'Mer / nautique',types:['Plage','Expérience','Port']},
+ soir:{label:'Soirée / coucher de soleil',types:['Port','Ville','Expérience','Plage']}
+};
+function crowdPenalty(c){return c==='high'?24:c==='medium'?9:0;}
 function timeOfDay(){const h=new Date().getHours();return h<11?'matin':h<17?'après-midi':h<20?'fin de journée':'soir';}
-function candidateScore(card,mood,duration){const dest={lat:+card.dataset.lat,lon:+card.dataset.lon},km=haversineKm(nowOrigin,dest),type=card.dataset.type,crowd=card.dataset.crowd;let score=100-Math.min(55,km*2.1)-crowdPenalty(crowd);const allowed=typeMood[mood]||[];if(mood!=='auto'&&!allowed.includes(type))score-=40;const tod=timeOfDay();if(tod==='soir'&&(type==='Port'||type==='Ville'))score+=24;if(tod==='matin'&&(type==='Plage'||type==='Village'))score+=12;if(duration<=2&&km>12)score-=35;if(duration<=4&&km>28)score-=24;if(currentConditions.rain>=3&&(type==='Plage'||type==='Expérience'))score-=45;if((currentConditions.gust>=45||currentConditions.wind>=30||currentConditions.wave>=1.2)&&mood==='mer')score-=60;if(mood==='auto'&&currentConditions.wind<=16&&currentConditions.wave<0.6&&(type==='Plage'||type==='Expérience'))score+=18;return{score,km};}
+function parseExperienceScore(card){
+ const text=[...card.querySelectorAll('.metric')].find(x=>x.textContent.includes('Score expérience'))?.querySelector('strong')?.textContent||'75';
+ return Number.parseInt(text,10)||75;
+}
+function estimatedTravelHours(card,km){
+ const walking=card.dataset.travelmode==='walking';
+ return walking ? km/4.5 : km/38 + 0.12;
+}
+function isEligible(card,mood,duration,km){
+ const cfg=moodConfig[mood]||moodConfig.auto;
+ const type=card.dataset.type||'';
+ if(mood!=='auto'&&!cfg.types.includes(type)) return false;
+ if(cfg.walkingOnly && card.dataset.travelmode!=='walking' && km>4.5) return false;
+ const oneWay=estimatedTravelHours(card,km);
+ const minimumStay = type==='Expérience' ? 1.25 : type==='Ville'||type==='Village' ? 1 : 0.75;
+ if((2*oneWay+minimumStay)>duration) return false;
+ if(duration<=2 && km>15) return false;
+ if(duration<=4 && km>35) return false;
+ if(mood==='mer' && (currentConditions.gust>=45||currentConditions.wind>=30||currentConditions.wave>=1.2) && type==='Expérience') return false;
+ return true;
+}
+function candidateScore(card,mood,duration){
+ const dest={lat:+card.dataset.lat,lon:+card.dataset.lon},km=haversineKm(nowOrigin,dest),type=card.dataset.type,crowd=card.dataset.crowd;
+ if(!isEligible(card,mood,duration,km)) return {score:-Infinity,km};
+ let score=parseExperienceScore(card)-Math.min(38,km*1.45)-crowdPenalty(crowd);
+ const tod=timeOfDay();
+ if(mood==='plage'&&type==='Plage')score+=32;
+ if(mood==='culture'&&(type==='Ville'||type==='Village'))score+=34;
+ if(mood==='culture'&&type==='Port')score+=14;
+ if(mood==='marche'&&card.dataset.travelmode==='walking')score+=42;
+ if(mood==='mer'&&type==='Expérience')score+=38;
+ if(mood==='mer'&&type==='Plage')score+=22;
+ if(mood==='soir'&&(type==='Port'||type==='Ville'))score+=36;
+ if(mood==='soir'&&type==='Expérience')score+=18;
+ if(tod==='soir'&&(type==='Port'||type==='Ville'))score+=20;
+ if(tod==='matin'&&(type==='Plage'||type==='Village'))score+=10;
+ if(duration===2&&km<3)score+=18;
+ if(duration===4&&km<15)score+=10;
+ if(currentConditions.rain>=3&&(type==='Plage'||type==='Expérience'))score-=50;
+ if(currentConditions.temp>=33&&(type==='Ville'||type==='Village')&&tod==='après-midi')score-=16;
+ if(mood==='auto'){
+   if(currentConditions.rain>=3&&(type==='Ville'||type==='Village'))score+=30;
+   else if(currentConditions.wind<=16&&currentConditions.wave<0.6&&(type==='Plage'||type==='Expérience'))score+=25;
+   else if(type==='Plage'||type==='Village'||type==='Port')score+=12;
+ }
+ return{score,km};
+}
+function recommendationReasons(card,mood,duration,km){
+ const type=card.dataset.type||'Lieu',crowd=card.dataset.crowd||'medium';
+ const reasons=[`${formatDistance(km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`];
+ if(mood==='marche') reasons.push(card.dataset.travelmode==='walking'?'accessible à pied depuis votre départ':'balade possible à proximité');
+ if(mood==='culture') reasons.push(type==='Village'?'village cohérent avec votre envie de découverte':type==='Ville'?'contenu urbain et culturel':'promenade de port');
+ if(mood==='plage') reasons.push('baignade prioritaire pour ce filtre');
+ if(mood==='mer') reasons.push(type==='Expérience'?'activité nautique prioritaire':'accès mer compatible');
+ if(mood==='soir') reasons.push('cadre adapté à la fin de journée');
+ reasons.push(crowd==='low'?'plutôt respirable':crowd==='medium'?'fréquenté mais gérable':'très fréquenté : horaire décisif');
+ if(type==='Plage'&&Number(currentConditions.wave||0)<0.7)reasons.push('mer annoncée calme');
+ if(duration===2)reasons.push('compatible avec une fenêtre de 2 heures');
+ return reasons;
+}
 function renderNow(){
  const box=$('nowResults'),status=$('nowStatus');
  try{
@@ -122,17 +188,18 @@ function renderNow(){
   if(!box) throw new Error('Zone de résultats introuvable');
   const source=$$('#spotsGrid .spot[data-lat]');
   if(!source.length) throw new Error('Aucun lieu disponible');
-  const cards=source.map(card=>({card,...candidateScore(card,mood,duration)})).filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score).slice(0,3);
-  if(!cards.length) throw new Error('Aucune option compatible');
+  const ranked=source.map(card=>({card,...candidateScore(card,mood,duration)})).filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score);
+  const cards=ranked.slice(0,3);
+  if(!cards.length) throw new Error('Aucune option réaliste pour cette combinaison. Augmentez le temps disponible ou changez d’envie.');
   box.innerHTML=cards.map((x,i)=>{
-   const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:Number(c.dataset.lat),lon:Number(c.dataset.lon)},route=mapsDirections(dest,nowOrigin,c.dataset.travelmode||'driving'),type=c.dataset.type||'Lieu',crowd=c.dataset.crowd||'medium';
-   const reasons=[`${formatDistance(x.km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`,crowd==='low'?'plutôt respirable':crowd==='medium'?'fréquenté mais gérable':'très fréquenté : horaire décisif'];
-   if(type==='Plage'&&Number(currentConditions.wave||0)<0.7)reasons.push('mer annoncée calme');
-   return `<article class="card now-option"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a><button class="link alt" type="button" onclick="history.replaceState(null,'','#spots');window.KairosApp.activatePanel('#spots')">Voir les lieux</button></div></article>`;
+   const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:Number(c.dataset.lat),lon:Number(c.dataset.lon)},route=mapsDirections(dest,nowOrigin,c.dataset.travelmode||'driving'),type=c.dataset.type||'Lieu';
+   const reasons=recommendationReasons(c,mood,duration,x.km);
+   return `<article class="card now-option" data-result-type="${type}" data-result-name="${name}"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a><button class="link alt" type="button" data-open-spots="1">Voir les lieux</button></div></article>`;
   }).join('');
-  if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
+  box.querySelectorAll('[data-open-spots]').forEach(b=>b.addEventListener('click',()=>{history.replaceState(null,'','#spots');activatePanel('#spots');}));
+  if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, envie « ${(moodConfig[mood]||moodConfig.auto).label} », départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
  }catch(err){
-  if(box)box.innerHTML=`<article class="card full"><h3>Impossible de calculer les options</h3><p>${err.message||'Erreur inconnue'}</p><button class="btn small" type="button" onclick="location.reload()">Recharger l’app</button></article>`;
+  if(box)box.innerHTML=`<article class="card full"><h3>Impossible de calculer les options</h3><p>${err.message||'Erreur inconnue'}</p></article>`;
   if(status)status.innerHTML='<strong>Erreur :</strong> la recommandation n’a pas pu être calculée.';
   console.error('renderNow',err);
  }
@@ -140,17 +207,61 @@ function renderNow(){
 window.KairosApp={renderNow,activatePanel};
 function setupNow(){
  $('nowGo')?.addEventListener('click',renderNow);
+ $('nowDuration')?.addEventListener('change',renderNow);
+ $('nowMood')?.addEventListener('change',renderNow);
  $('nowHotel')?.addEventListener('click',()=>{nowOrigin=HOTEL;$('nowHotel')?.classList.add('active');$('nowHere')?.classList.remove('active');renderNow();});
  $('nowHere')?.addEventListener('click',()=>requestPosition(p=>{nowOrigin={lat:p.coords.latitude,lon:p.coords.longitude,label:'votre position'};$('nowHere')?.classList.add('active');$('nowHotel')?.classList.remove('active');renderNow();toast('Suggestions recalculées');},err=>{$('locationHelp')?.setAttribute('open','');toast(geolocationMessage(err),3500);}));
  renderNow();
 }
 function buildMap(){const canvas=$('mapCanvas'),detail=$('mapDetail');if(!canvas||!detail)return;canvas.querySelectorAll('.map-marker').forEach(x=>x.remove());const cards=$$('#spotsGrid .spot[data-lat]'),bounds={minLat:39.25,maxLat:39.94,minLon:2.28,maxLon:3.46};cards.forEach(c=>{const lat=+c.dataset.lat,lon=+c.dataset.lon,type=(c.dataset.type||'experience').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),x=(lon-bounds.minLon)/(bounds.maxLon-bounds.minLon)*86+7,y=(bounds.maxLat-lat)/(bounds.maxLat-bounds.minLat)*82+8,b=document.createElement('button');b.type='button';b.className=`map-marker ${type}`;b.style.left=`${Math.max(4,Math.min(96,x))}%`;b.style.top=`${Math.max(5,Math.min(95,y))}%`;b.title=c.querySelector('h3')?.textContent||'';b.setAttribute('aria-label',b.title);b.addEventListener('click',()=>{canvas.querySelectorAll('.map-marker').forEach(m=>m.classList.remove('active'));b.classList.add('active');const name=c.querySelector('h3')?.textContent,desc=c.querySelector('p')?.textContent,dest={lat,lon},route=mapsDirections(dest,distanceOrigin,c.dataset.travelmode||'driving');detail.innerHTML=`<span class="tag">${c.dataset.type}</span><h3>${name}</h3><p>${desc}</p><div class="metric"><span>Depuis l’hôtel</span><strong>${c.querySelector('.distance-value')?.textContent||'Voir Maps'}</strong></div><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a></div>`;});canvas.appendChild(b);});}
-function setupPapa(){const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),hint=$('papaHint');const set=open=>{panel?.classList.toggle('visible',open);if(hint)hint.textContent=open?'Espace Papa déverrouillé sur cet appareil.':'Code requis.';error?.classList.remove('visible');};const attempt=()=>{const ok=(code?.value||'')==='1011';set(ok);if(ok){sessionStorage.setItem('papaUnlocked','1');toast('Espace Papa déverrouillé');}else error?.classList.add('visible');};$('unlockPapa')?.addEventListener('click',attempt);code?.addEventListener('keydown',e=>{if(e.key==='Enter')attempt();});if(sessionStorage.getItem('papaUnlocked')==='1')set(true);}
+function setupPapa(){
+ const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),hint=$('papaHint'),lock=$('papaLock');
+ const set=open=>{
+  panel?.classList.toggle('visible',open);
+  panel?.setAttribute('aria-hidden',open?'false':'true');
+  if(lock) lock.hidden=open;
+  if(hint) hint.textContent=open?'Espace Papa déverrouillé pour cette session.':'Code à 4 chiffres.';
+  error?.classList.remove('visible');
+  if(!open&&code) code.value='';
+ };
+ const attempt=()=>{
+  const ok=(code?.value||'').trim()==='1011';
+  if(ok){sessionStorage.setItem('papaUnlocked','1');set(true);toast('Espace Papa déverrouillé');}
+  else{set(false);error?.classList.add('visible');code?.focus();}
+ };
+ $('unlockPapa')?.addEventListener('click',attempt);
+ $('lockPapa')?.addEventListener('click',()=>{sessionStorage.removeItem('papaUnlocked');set(false);toast('Espace Papa verrouillé');});
+ code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}});
+ set(sessionStorage.getItem('papaUnlocked')==='1');
+}
 function setupShare(){if(navigator.share&&!document.querySelector('[data-share-app]')){const b=document.createElement('button');b.className='btn secondary';b.dataset.shareApp='1';b.textContent='Partager l’app';b.addEventListener('click',()=>navigator.share({title:document.title,text:'Assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(b);}}
 function highlightToday(){const fmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(new Date()).toLowerCase();$$('#agendaGrid .day-date').forEach(d=>d.closest('.day')?.classList.toggle('today-agenda',d.textContent.toLowerCase().includes(fmt)));}
-function runDiagnostics(){const tests=[];const t=(name,ok,detail='')=>tests.push({name,ok,detail});t('Bouton 3 options',!!$('nowGo')&&typeof renderNow==='function');t('Cartes de lieux',$$('#spotsGrid .spot[data-lat]').length>=10,`${$$('#spotsGrid .spot[data-lat]').length} fiches`);t('Liens d’itinéraire',$$('.route-link[href^="https://www.google.com/maps/"]').length===$$('.route-link').length);t('Filtres',$$('.filter-radio').length>=4);t('Géolocalisation',!!navigator.geolocation,location.protocol);t('Météo',typeof fetch==='function');t('Espace Papa',!!$('unlockPapa')&&!!$('papaPanel'));const badLinks=$$('a[href]').filter(a=>!a.getAttribute('href')||a.getAttribute('href')==='#');t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');const box=$('diagnosticsResults');if(box){box.hidden=false;box.innerHTML=tests.map(x=>`<div class="metric"><span>${x.ok?'✅':'❌'} ${x.name}</span><strong>${x.detail|| (x.ok?'OK':'À corriger')}</strong></div>`).join('');}if($('diagnosticsText'))$('diagnosticsText').textContent=tests.every(x=>x.ok)?'Toutes les fonctions essentielles sont chargées.':'Une anomalie a été détectée.';return tests;}
+function runDiagnostics(){
+ const tests=[];const t=(name,ok,detail='')=>tests.push({name,ok,detail});
+ t('Bouton 3 options',!!$('nowGo')&&typeof renderNow==='function');
+ t('Cartes de lieux',$$('#spotsGrid .spot[data-lat]').length>=10,`${$$('#spotsGrid .spot[data-lat]').length} fiches`);
+ t('Liens d’itinéraire',$$('.route-link[href^="https://www.google.com/maps/"]').length===$$('.route-link').length);
+ t('Filtres',$$('.filter-radio').length>=4);
+ t('Géolocalisation',!!navigator.geolocation,location.protocol);
+ t('Météo',typeof fetch==='function');
+ t('Espace Papa',!!$('unlockPapa')&&!!$('papaPanel'));
+ const badLinks=$$('a[href]').filter(a=>!a.getAttribute('href')||a.getAttribute('href')==='#');
+ t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');
+ const source=$$('#spotsGrid .spot[data-lat]');
+ const top=(mood,duration)=>source.map(card=>({card,...candidateScore(card,mood,duration)})).filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score).slice(0,3);
+ const walk=top('marche',2),culture=top('culture',4),beach=top('plage',2),sea=top('mer',4);
+ t('Moteur - Marcher',walk.length>0&&walk.every(x=>x.card.dataset.travelmode==='walking'),walk.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
+ t('Moteur - Culture',culture.length>0&&culture.every(x=>['Ville','Village','Port'].includes(x.card.dataset.type)),culture.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
+ t('Moteur - Plage',beach.length>0&&beach.every(x=>x.card.dataset.type==='Plage'),beach.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
+ const signatures=[walk,culture,beach,sea].map(arr=>arr.map(x=>x.card.dataset.name).join('|'));
+ t('Moteur - Filtres distincts',new Set(signatures).size>=3,`${new Set(signatures).size}/4 profils distincts`);
+ const box=$('diagnosticsResults');
+ if(box){box.hidden=false;box.innerHTML=tests.map(x=>`<div class="metric"><span>${x.ok?'✅':'❌'} ${x.name}</span><strong>${x.detail|| (x.ok?'OK':'À corriger')}</strong></div>`).join('');}
+ if($('diagnosticsText'))$('diagnosticsText').textContent=tests.every(x=>x.ok)?'Toutes les fonctions essentielles sont chargées.':'Une anomalie a été détectée.';
+ return tests;
+}
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.2');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
 function init(){setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}

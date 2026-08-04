@@ -36,8 +36,6 @@ footer{margin-top:40px;padding:24px 0;color:var(--muted);font-size:.9rem;border-
 
 .papa-form input{padding:11px 12px;border:1px solid var(--line);border-radius:12px;max-width:170px;background:white}
 .papa-content{display:none;margin-top:18px;animation:fade .25s ease}
-.papa-form input:valid ~ .papa-content{display:block}
-.papa-form input:valid + .papa-hint{color:var(--ok)}
 .papa-hint{font-size:.88rem;color:var(--muted);margin:7px 0 0}
 .soft-rule{border:0;border-top:1px solid var(--line);margin:22px 0}
 
@@ -103,7 +101,7 @@ main section.app-panel.active-panel{display:block}
 <a class="navbtn" href="#secrets">Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.0.0 - stable</span></div>
+<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.0.1 - correctif moteur</span></div>
 <div class="grid dashboard-focus">
 <div class="card wide rec-card" id="todayRecommendation">
 <span class="rec-badge"><span class="status-dot" id="liveDot"></span>Actualisation à l’ouverture</span>
@@ -255,10 +253,14 @@ main section.app-panel.active-panel{display:block}
 <div class="card full secret papa-card">
 <form class="papa-form" onsubmit="return false">
 <h3>Journées anniversaire</h3>
-<p>Saisis le code Papa. Le contenu s’affiche automatiquement.</p>
-<input aria-label="Code Papa" id="papaCode" inputmode="numeric" maxlength="4" placeholder="Code Papa"/><button class="btn small" id="unlockPapa" type="button">Déverrouiller</button>
-<p class="papa-hint">Code à 4 chiffres.</p>
-<div class="papa-content papa-panel" id="papaPanel">
+<div id="papaLock">
+<p>Saisis le code Papa pour afficher les journées surprises.</p>
+<input aria-label="Code Papa" id="papaCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Code Papa" autocomplete="off"/><button class="btn small" id="unlockPapa" type="button">Déverrouiller</button>
+<p class="papa-hint" id="papaHint">Code à 4 chiffres.</p>
+<p class="papa-error" id="papaError" role="alert">Code incorrect.</p>
+</div>
+<div class="papa-content papa-panel" id="papaPanel" aria-hidden="true">
+<div class="actions" style="justify-content:flex-end"><button class="btn small secondary" id="lockPapa" type="button">Verrouiller</button></div>
 <h3>10 août - 19 ans</h3>
 <p><strong>Style :</strong> énergie, activité nautique et dîner surprise à 8.</p>
 <div class="metric"><span>Journée</span><strong>Parasailing / bouée / jet-ski selon choix et météo</strong></div>
@@ -292,5 +294,5 @@ main section.app-panel.active-panel{display:block}
 </div>
 <div class="toast" id="toast"></div>
 
-<script defer="True" src="./app.js?v=1.0.0"></script></body>
+<script defer="True" src="./app.js?v=1.0.2"></script></body>
 </html>

@@ -1,0 +1,35 @@
+{
+  "ids": 73,
+  "duplicate_ids": [],
+  "anchors_total": 18,
+  "broken_anchors": [],
+  "links_total": 90,
+  "empty_links": [],
+  "scripts": [
+    "./app.js?v=1.0.2"
+  ],
+  "missing_scripts": [],
+  "js_id_refs": 50,
+  "missing_ids_referenced_by_js": [
+    "#agendaGrid .day-date",
+    "#spotsGrid .spot",
+    "#spotsGrid .spot[data-lat]",
+    ".app-panel",
+    ".favbtn",
+    ".filter-radio",
+    ".navbtn",
+    ".navbtn, .home-action-grid a[href^=\"#\"], a[href=\"#spots\"]",
+    ".route-link",
+    ".route-link[href^=\"https://www.google.com/maps/\"]",
+    ".spot[data-lat]",
+    "[data-check]",
+    "a[href]",
+    "a[href^=\"http\"]"
+  ],
+  "buttons": 30,
+  "unwired_button_ids": [],
+  "papa_initial_hidden_css": true,
+  "papa_css_valid_leak": false,
+  "papa_code_logic": true,
+  "lock_button": true
+}
