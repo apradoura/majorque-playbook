@@ -214,25 +214,52 @@ function setupNow(){
  renderNow();
 }
 function buildMap(){const canvas=$('mapCanvas'),detail=$('mapDetail');if(!canvas||!detail)return;canvas.querySelectorAll('.map-marker').forEach(x=>x.remove());const cards=$$('#spotsGrid .spot[data-lat]'),bounds={minLat:39.25,maxLat:39.94,minLon:2.28,maxLon:3.46};cards.forEach(c=>{const lat=+c.dataset.lat,lon=+c.dataset.lon,type=(c.dataset.type||'experience').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),x=(lon-bounds.minLon)/(bounds.maxLon-bounds.minLon)*86+7,y=(bounds.maxLat-lat)/(bounds.maxLat-bounds.minLat)*82+8,b=document.createElement('button');b.type='button';b.className=`map-marker ${type}`;b.style.left=`${Math.max(4,Math.min(96,x))}%`;b.style.top=`${Math.max(5,Math.min(95,y))}%`;b.title=c.querySelector('h3')?.textContent||'';b.setAttribute('aria-label',b.title);b.addEventListener('click',()=>{canvas.querySelectorAll('.map-marker').forEach(m=>m.classList.remove('active'));b.classList.add('active');const name=c.querySelector('h3')?.textContent,desc=c.querySelector('p')?.textContent,dest={lat,lon},route=mapsDirections(dest,distanceOrigin,c.dataset.travelmode||'driving');detail.innerHTML=`<span class="tag">${c.dataset.type}</span><h3>${name}</h3><p>${desc}</p><div class="metric"><span>Depuis l’hôtel</span><strong>${c.querySelector('.distance-value')?.textContent||'Voir Maps'}</strong></div><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a></div>`;});canvas.appendChild(b);});}
+const PAPA_CONFIG={
+ codeHash:'66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898',
+ autoLockMinutes:15
+};
+async function sha256Hex(value){
+ const bytes=new TextEncoder().encode(value);
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 function setupPapa(){
- const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),hint=$('papaHint'),lock=$('papaLock');
- const set=open=>{
+ const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),gate=$('papaLock'),modal=$('papaModal');
+ let autoLockTimer=null;
+ const closeModal=()=>{if(modal){modal.hidden=true;} if(code)code.value=''; error?.classList.remove('visible');};
+ const scheduleAutoLock=()=>{
+  clearTimeout(autoLockTimer);
+  if(panel?.classList.contains('visible')) autoLockTimer=setTimeout(()=>setLocked(true,'Espace Papa verrouillé automatiquement'),PAPA_CONFIG.autoLockMinutes*60*1000);
+ };
+ const setLocked=(locked,message='')=>{
+  const open=!locked;
   panel?.classList.toggle('visible',open);
   panel?.setAttribute('aria-hidden',open?'false':'true');
-  if(lock) lock.hidden=open;
-  if(hint) hint.textContent=open?'Espace Papa déverrouillé.':'Code à 4 chiffres.';
-  error?.classList.remove('visible');
-  if(!open&&code) code.value='';
+  if(gate)gate.hidden=open;
+  if(locked)clearTimeout(autoLockTimer); else scheduleAutoLock();
+  closeModal();
+  if(message)toast(message);
  };
- const attempt=()=>{
-  const ok=(code?.value||'').trim()==='1011';
-  if(ok){set(true);toast('Espace Papa déverrouillé');}
-  else{set(false);error?.classList.add('visible');code?.focus();}
+ const openModal=()=>{if(!modal)return;modal.hidden=false;setTimeout(()=>code?.focus(),50);};
+ const attempt=async()=>{
+  const entered=(code?.value||'').trim();
+  if(!/^\d{4}$/.test(entered)){error?.classList.add('visible');code?.focus();return;}
+  try{
+   const ok=(await sha256Hex(entered))===PAPA_CONFIG.codeHash;
+   if(ok){setLocked(false,'Espace Papa déverrouillé');}
+   else{error?.classList.add('visible');if(code){code.value='';code.focus();}}
+  }catch(err){console.error('Papa hash',err);error?.classList.add('visible');}
  };
+ $('openPapaModal')?.addEventListener('click',openModal);
+ $('cancelPapa')?.addEventListener('click',closeModal);
  $('unlockPapa')?.addEventListener('click',attempt);
- $('lockPapa')?.addEventListener('click',()=>{set(false);toast('Espace Papa verrouillé');});
- code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}});
- set(false);
+ $('lockPapa')?.addEventListener('click',()=>setLocked(true,'Espace Papa masqué'));
+ code?.addEventListener('input',()=>error?.classList.remove('visible'));
+ code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}if(e.key==='Escape')closeModal();});
+ modal?.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+ ['pointerdown','keydown','touchstart'].forEach(evt=>panel?.addEventListener(evt,scheduleAutoLock,{passive:true}));
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&panel?.classList.contains('visible'))setLocked(true);});
+ setLocked(true);
 }
 function setupShare(){if(navigator.share&&!document.querySelector('[data-share-app]')){const b=document.createElement('button');b.className='btn secondary';b.dataset.shareApp='1';b.textContent='Partager l’app';b.addEventListener('click',()=>navigator.share({title:document.title,text:'Assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(b);}}
 function highlightToday(){const fmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(new Date()).toLowerCase();$$('#agendaGrid .day-date').forEach(d=>d.closest('.day')?.classList.toggle('today-agenda',d.textContent.toLowerCase().includes(fmt)));}
@@ -244,7 +271,7 @@ function runDiagnostics(){
  t('Filtres',$$('.filter-radio').length>=4);
  t('Géolocalisation',!!navigator.geolocation,location.protocol);
  t('Météo',typeof fetch==='function');
- t('Espace Papa',!!$('unlockPapa')&&!!$('papaPanel'));
+ t('Espace Papa',!!$('openPapaModal')&&!!$('unlockPapa')&&!!$('papaPanel'));
  const badLinks=$$('a[href]').filter(a=>!a.getAttribute('href')||a.getAttribute('href')==='#');
  t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');
  const source=$$('#spotsGrid .spot[data-lat]');

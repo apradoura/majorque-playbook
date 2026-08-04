@@ -79,6 +79,18 @@ footer{margin-top:40px;padding:24px 0;color:var(--muted);font-size:.9rem;border-
 .app section.app-panel{display:none}
 .app section.app-panel.active-panel{display:block}
 
+
+/* 1.1.0 - Espace Papa discret, haché et auto-verrouillé */
+.papa-gate{text-align:center;padding:10px 0 4px}
+.papa-gate .lock-icon{font-size:2rem;display:block;margin-bottom:8px}
+.papa-modal[hidden]{display:none!important}
+.papa-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(11,25,28,.62);backdrop-filter:blur(8px)}
+.papa-modal-card{width:min(92vw,420px);background:#fffdf8;border-radius:24px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+.papa-modal-card h3{margin-top:0}
+.papa-modal-card input{width:100%;font-size:1.25rem;letter-spacing:.35em;text-align:center;padding:14px;border:1px solid var(--line);border-radius:14px;margin:8px 0 12px;background:#fff}
+.papa-modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.papa-session-note{font-size:.86rem;color:var(--muted);margin-top:8px}
+
 /* 1.0.3 hardening: fail-safe navigation and Papa privacy */
 section.app-panel{display:none!important}
 section.app-panel.active-panel{display:block!important}
@@ -109,7 +121,7 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <a class="navbtn" href="#secrets">Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.0.5 - navigation durcie</span></div>
+<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.1.0 - espace Papa sécurisé</span></div>
 <div class="grid dashboard-focus">
 <div class="card wide rec-card" id="todayRecommendation">
 <span class="rec-badge"><span class="status-dot" id="liveDot"></span>Actualisation à l’ouverture</span>
@@ -261,14 +273,14 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <div class="card full secret papa-card">
 <form class="papa-form" onsubmit="return false">
 <h3>Journées anniversaire</h3>
-<div id="papaLock">
-<p>Saisis le code Papa pour afficher les journées surprises.</p>
-<input aria-label="Code Papa" id="papaCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Code Papa" autocomplete="off"/><button class="btn small" id="unlockPapa" type="button">Déverrouiller</button>
-<p class="papa-hint" id="papaHint">Code à 4 chiffres.</p>
-<p class="papa-error" id="papaError" role="alert">Code incorrect.</p>
+<div class="papa-gate" id="papaLock">
+<span class="lock-icon" aria-hidden="true">🔒</span>
+<p>Les détails restent masqués jusqu’à l’ouverture.</p>
+<button class="btn" id="openPapaModal" type="button">Ouvrir l’espace Papa</button>
+<p class="papa-session-note">Verrouillage automatique après 15 minutes d’inactivité.</p>
 </div>
 <div class="papa-content papa-panel" id="papaPanel" aria-hidden="true">
-<div class="actions" style="justify-content:flex-end"><button class="btn small secondary" id="lockPapa" type="button">Verrouiller</button></div>
+<div class="actions" style="justify-content:flex-end"><button class="btn small secondary" id="lockPapa" type="button">Masquer maintenant</button></div>
 <h3>10 août - 19 ans</h3>
 <p><strong>Style :</strong> énergie, activité nautique et dîner surprise à 8.</p>
 <div class="metric"><span>Journée</span><strong>Parasailing / bouée / jet-ski selon choix et météo</strong></div>
@@ -297,8 +309,21 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 </div>
 </section>
 <footer>
-  Données enregistrées localement sur cet appareil : favoris, cases cochées et mode parent. Les liens externes nécessitent une connexion. Vérifier horaires, disponibilité et météo avant chaque réservation.
+  Données enregistrées localement sur cet appareil : favoris, cases cochées et cases cochées. L’espace Papa n’est jamais mémorisé. Les liens externes nécessitent une connexion. Vérifier horaires, disponibilité et météo avant chaque réservation.
 <br/>Météo et mer : données Open-Meteo, actualisées à la demande. Les prévisions marines ne remplacent jamais les consignes du loueur, les autorités portuaires ou l’observation locale.</footer>
+</div>
+
+<div class="papa-modal" id="papaModal" hidden role="dialog" aria-modal="true" aria-labelledby="papaModalTitle">
+  <div class="papa-modal-card">
+    <h3 id="papaModalTitle">Ouvrir l’espace Papa</h3>
+    <p>Saisis le code à 4 chiffres.</p>
+    <input aria-label="Code Papa" id="papaCode" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="••••" autocomplete="one-time-code"/>
+    <p class="papa-error" id="papaError" role="alert">Code incorrect.</p>
+    <div class="papa-modal-actions">
+      <button class="btn small secondary" id="cancelPapa" type="button">Annuler</button>
+      <button class="btn small" id="unlockPapa" type="button">Déverrouiller</button>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -531,25 +556,52 @@ function setupNow(){
  renderNow();
 }
 function buildMap(){const canvas=$('mapCanvas'),detail=$('mapDetail');if(!canvas||!detail)return;canvas.querySelectorAll('.map-marker').forEach(x=>x.remove());const cards=$$('#spotsGrid .spot[data-lat]'),bounds={minLat:39.25,maxLat:39.94,minLon:2.28,maxLon:3.46};cards.forEach(c=>{const lat=+c.dataset.lat,lon=+c.dataset.lon,type=(c.dataset.type||'experience').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(),x=(lon-bounds.minLon)/(bounds.maxLon-bounds.minLon)*86+7,y=(bounds.maxLat-lat)/(bounds.maxLat-bounds.minLat)*82+8,b=document.createElement('button');b.type='button';b.className=`map-marker ${type}`;b.style.left=`${Math.max(4,Math.min(96,x))}%`;b.style.top=`${Math.max(5,Math.min(95,y))}%`;b.title=c.querySelector('h3')?.textContent||'';b.setAttribute('aria-label',b.title);b.addEventListener('click',()=>{canvas.querySelectorAll('.map-marker').forEach(m=>m.classList.remove('active'));b.classList.add('active');const name=c.querySelector('h3')?.textContent,desc=c.querySelector('p')?.textContent,dest={lat,lon},route=mapsDirections(dest,distanceOrigin,c.dataset.travelmode||'driving');detail.innerHTML=`<span class="tag">${c.dataset.type}</span><h3>${name}</h3><p>${desc}</p><div class="metric"><span>Depuis l’hôtel</span><strong>${c.querySelector('.distance-value')?.textContent||'Voir Maps'}</strong></div><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a></div>`;});canvas.appendChild(b);});}
+const PAPA_CONFIG={
+ codeHash:'66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898',
+ autoLockMinutes:15
+};
+async function sha256Hex(value){
+ const bytes=new TextEncoder().encode(value);
+ const digest=await crypto.subtle.digest('SHA-256',bytes);
+ return [...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 function setupPapa(){
- const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),hint=$('papaHint'),lock=$('papaLock');
- const set=open=>{
+ const code=$('papaCode'),panel=$('papaPanel'),error=$('papaError'),gate=$('papaLock'),modal=$('papaModal');
+ let autoLockTimer=null;
+ const closeModal=()=>{if(modal){modal.hidden=true;} if(code)code.value=''; error?.classList.remove('visible');};
+ const scheduleAutoLock=()=>{
+  clearTimeout(autoLockTimer);
+  if(panel?.classList.contains('visible')) autoLockTimer=setTimeout(()=>setLocked(true,'Espace Papa verrouillé automatiquement'),PAPA_CONFIG.autoLockMinutes*60*1000);
+ };
+ const setLocked=(locked,message='')=>{
+  const open=!locked;
   panel?.classList.toggle('visible',open);
   panel?.setAttribute('aria-hidden',open?'false':'true');
-  if(lock) lock.hidden=open;
-  if(hint) hint.textContent=open?'Espace Papa déverrouillé.':'Code à 4 chiffres.';
-  error?.classList.remove('visible');
-  if(!open&&code) code.value='';
+  if(gate)gate.hidden=open;
+  if(locked)clearTimeout(autoLockTimer); else scheduleAutoLock();
+  closeModal();
+  if(message)toast(message);
  };
- const attempt=()=>{
-  const ok=(code?.value||'').trim()==='1011';
-  if(ok){set(true);toast('Espace Papa déverrouillé');}
-  else{set(false);error?.classList.add('visible');code?.focus();}
+ const openModal=()=>{if(!modal)return;modal.hidden=false;setTimeout(()=>code?.focus(),50);};
+ const attempt=async()=>{
+  const entered=(code?.value||'').trim();
+  if(!/^\d{4}$/.test(entered)){error?.classList.add('visible');code?.focus();return;}
+  try{
+   const ok=(await sha256Hex(entered))===PAPA_CONFIG.codeHash;
+   if(ok){setLocked(false,'Espace Papa déverrouillé');}
+   else{error?.classList.add('visible');if(code){code.value='';code.focus();}}
+  }catch(err){console.error('Papa hash',err);error?.classList.add('visible');}
  };
+ $('openPapaModal')?.addEventListener('click',openModal);
+ $('cancelPapa')?.addEventListener('click',closeModal);
  $('unlockPapa')?.addEventListener('click',attempt);
- $('lockPapa')?.addEventListener('click',()=>{set(false);toast('Espace Papa verrouillé');});
- code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}});
- set(false);
+ $('lockPapa')?.addEventListener('click',()=>setLocked(true,'Espace Papa masqué'));
+ code?.addEventListener('input',()=>error?.classList.remove('visible'));
+ code?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();attempt();}if(e.key==='Escape')closeModal();});
+ modal?.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+ ['pointerdown','keydown','touchstart'].forEach(evt=>panel?.addEventListener(evt,scheduleAutoLock,{passive:true}));
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&panel?.classList.contains('visible'))setLocked(true);});
+ setLocked(true);
 }
 function setupShare(){if(navigator.share&&!document.querySelector('[data-share-app]')){const b=document.createElement('button');b.className='btn secondary';b.dataset.shareApp='1';b.textContent='Partager l’app';b.addEventListener('click',()=>navigator.share({title:document.title,text:'Assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(b);}}
 function highlightToday(){const fmt=new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long'}).format(new Date()).toLowerCase();$$('#agendaGrid .day-date').forEach(d=>d.closest('.day')?.classList.toggle('today-agenda',d.textContent.toLowerCase().includes(fmt)));}
@@ -561,7 +613,7 @@ function runDiagnostics(){
  t('Filtres',$$('.filter-radio').length>=4);
  t('Géolocalisation',!!navigator.geolocation,location.protocol);
  t('Météo',typeof fetch==='function');
- t('Espace Papa',!!$('unlockPapa')&&!!$('papaPanel'));
+ t('Espace Papa',!!$('openPapaModal')&&!!$('unlockPapa')&&!!$('papaPanel'));
  const badLinks=$$('a[href]').filter(a=>!a.getAttribute('href')||a.getAttribute('href')==='#');
  t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');
  const source=$$('#spotsGrid .spot[data-lat]');
@@ -578,7 +630,7 @@ function runDiagnostics(){
  return tests;
 }
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.5');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.1.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
 function init(){
