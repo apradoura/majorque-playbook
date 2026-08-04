@@ -80,8 +80,8 @@ footer{margin-top:40px;padding:24px 0;color:var(--muted);font-size:.9rem;border-
 .app section.app-panel.active-panel{display:block}
 
 /* 1.0.3 hardening: fail-safe navigation and Papa privacy */
-main section.app-panel{display:none!important}
-main section.app-panel.active-panel{display:block!important}
+section.app-panel{display:none!important}
+section.app-panel.active-panel{display:block!important}
 body:not(.js-ready) .app section#dashboard{display:block!important}
 #papaPanel[aria-hidden="true"],#papaPanel:not(.visible){display:none!important}
 #papaPanel.visible[aria-hidden="false"]{display:block!important}
@@ -109,7 +109,7 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <a class="navbtn" href="#secrets">Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.0.4 - navigation + Papa vérifiés</span></div>
+<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.0.5 - navigation durcie</span></div>
 <div class="grid dashboard-focus">
 <div class="card wide rec-card" id="todayRecommendation">
 <span class="rec-badge"><span class="status-dot" id="liveDot"></span>Actualisation à l’ouverture</span>
@@ -313,6 +313,12 @@ let distanceOrigin = HOTEL;
 let nowOrigin = HOTEL;
 let currentConditions = {temp:null,wind:null,gust:null,rain:null,wave:null};
 let favOnly = false;
+const storage={
+ get(k){try{return localStorage.getItem(k)}catch{return null}},
+ set(k,v){try{localStorage.setItem(k,v)}catch{}},
+ remove(k){try{localStorage.removeItem(k)}catch{}}
+};
+function safeRun(name,fn){try{fn()}catch(err){console.error(`[Kairos:${name}]`,err);}}
 
 function toast(text, ms=2200){ const el=$('toast'); if(!el)return; el.textContent=text; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),ms); }
 function haversineKm(a,b){const R=6371,rad=x=>x*Math.PI/180,dLat=rad(b.lat-a.lat),dLon=rad(b.lon-a.lon),la1=rad(a.lat),la2=rad(b.lat);const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
@@ -354,15 +360,21 @@ function activatePanel(hash, scroll=true){
  if(scroll) window.scrollTo({top:0,behavior:'instant'});
 }
 function setupNavigation(){
- $$('.navbtn, .home-action-grid a[href^="#"], a[href="#spots"]').forEach(a=>a.addEventListener('click',e=>{
-  const h=a.getAttribute('href'); if(!h||!h.startsWith('#'))return; e.preventDefault(); history.replaceState(null,'',h); activatePanel(h);
- }));
- window.addEventListener('hashchange',()=>activatePanel(location.hash));
- activatePanel(location.hash||'#dashboard',false);
+ const sync=()=>activatePanel(location.hash||'#dashboard',false);
+ window.addEventListener('hashchange',sync);
+ document.addEventListener('click',e=>{
+  const a=e.target.closest('a[href^="#"]');
+  if(!a)return;
+  const h=a.getAttribute('href');
+  if(!h||h==='#')return;
+  // Keep native hash navigation; this remains functional even if another module fails.
+  setTimeout(()=>activatePanel(h,false),0);
+ });
+ sync();
 }
 function setupChecksAndFavorites(){
- $$('[data-check]').forEach(el=>{const k='check_'+el.dataset.check;el.checked=localStorage.getItem(k)==='1';el.addEventListener('change',()=>localStorage.setItem(k,el.checked?'1':'0'));});
- $$('.favbtn').forEach(btn=>{const k='fav_'+btn.dataset.fav;const sync=()=>btn.textContent=localStorage.getItem(k)==='1'?'★ Favori':'☆ Favori';sync();btn.addEventListener('click',()=>{localStorage.setItem(k,localStorage.getItem(k)==='1'?'0':'1');sync();applySpotFilters();toast(btn.textContent.startsWith('★')?'Ajouté aux favoris':'Retiré des favoris');});});
+ $$('[data-check]').forEach(el=>{const k='check_'+el.dataset.check;el.checked=storage.get(k)==='1';el.addEventListener('change',()=>storage.set(k,el.checked?'1':'0'));});
+ $$('.favbtn').forEach(btn=>{const k='fav_'+btn.dataset.fav;const sync=()=>btn.textContent=storage.get(k)==='1'?'★ Favori':'☆ Favori';sync();btn.addEventListener('click',()=>{storage.set(k,storage.get(k)==='1'?'0':'1');sync();applySpotFilters();toast(btn.textContent.startsWith('★')?'Ajouté aux favoris':'Retiré des favoris');});});
 }
 function selectedValue(name, fallback){return document.querySelector(`input[name="${name}"]:checked`)?.id?.replace(name.replace('-filter','')+'-','')||fallback;}
 function applySpotFilters(){
@@ -377,7 +389,7 @@ function applySpotFilters(){
   const normalized=(card.dataset.type||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const matchesType=type==='all'||normalized===type;
   const matchesCrowd=crowd==='all'||card.dataset.crowd===crowd;
-  const matchesFav=!favOnly||localStorage.getItem(key)==='1';
+  const matchesFav=!favOnly||storage.get(key)==='1';
   const visible=matchesText&&matchesType&&matchesCrowd&&matchesFav;
   card.classList.toggle('search-hidden',!visible); if(visible)shown++;
  });
@@ -408,8 +420,8 @@ async function loadLiveWeather(coords=LIVE_DEFAULT){
   currentConditions={temp:c.temperature_2m||0,wind:c.wind_speed_10m||0,gust:c.wind_gusts_10m||0,rain:c.precipitation||0,wave:mc.wave_height||0};
   const vals={liveTemp:c.temperature_2m!=null?`${Math.round(c.temperature_2m)} °C`:'--',liveWind:c.wind_speed_10m!=null?`${Math.round(c.wind_speed_10m)} km/h ${compass(c.wind_direction_10m)}`:'--',liveGust:c.wind_gusts_10m!=null?`${Math.round(c.wind_gusts_10m)} km/h`:'--',liveRain:c.precipitation!=null?`${c.precipitation.toFixed(1)} mm`:'--',liveWave:mc.wave_height!=null?`${mc.wave_height.toFixed(1)} m`:'--',livePeriod:mc.wave_period!=null?`${mc.wave_period.toFixed(0)} s`:'--',liveSeaTemp:mc.sea_surface_temperature!=null?`${mc.sea_surface_temperature.toFixed(0)} °C`:'--',liveSeaRead:seaLabel(mc.wave_height)};
   Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).textContent=v;});
-  const msg=makeRecommendation(currentConditions);if(rec)rec.textContent=msg;if($('weatherUpdated'))$('weatherUpdated').textContent=`Mis à jour ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} - ${coords.name||'position actuelle'}`;if(dot)dot.className='status-dot ok';localStorage.setItem('liveCache',JSON.stringify({t:Date.now(),coords,w:c,m:mc,msg}));
- }catch(e){const cached=localStorage.getItem('liveCache');if(cached){const x=JSON.parse(cached);if(rec)rec.textContent=`Hors ligne - dernière lecture : ${x.msg}`;if(dot)dot.className='status-dot warn';if($('weatherUpdated'))$('weatherUpdated').textContent='Données en cache.';}else{if(rec)rec.textContent='Prévisions indisponibles. Utilisez Windy.';if(dot)dot.className='status-dot bad';}}
+  const msg=makeRecommendation(currentConditions);if(rec)rec.textContent=msg;if($('weatherUpdated'))$('weatherUpdated').textContent=`Mis à jour ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} - ${coords.name||'position actuelle'}`;if(dot)dot.className='status-dot ok';storage.set('liveCache',JSON.stringify({t:Date.now(),coords,w:c,m:mc,msg}));
+ }catch(e){const cached=storage.get('liveCache');if(cached){const x=JSON.parse(cached);if(rec)rec.textContent=`Hors ligne - dernière lecture : ${x.msg}`;if(dot)dot.className='status-dot warn';if($('weatherUpdated'))$('weatherUpdated').textContent='Données en cache.';}else{if(rec)rec.textContent='Prévisions indisponibles. Utilisez Windy.';if(dot)dot.className='status-dot bad';}}
 }
 function setupWeather(){
  $('refreshLive')?.addEventListener('click',()=>loadLiveWeather(LIVE_DEFAULT));
@@ -566,10 +578,26 @@ function runDiagnostics(){
  return tests;
 }
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.4');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.5');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
-function init(){document.body.classList.add('js-ready');setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}
+function init(){
+ document.body.classList.add('js-ready');
+ safeRun('navigation',setupNavigation);
+ safeRun('favorites',setupChecksAndFavorites);
+ safeRun('filters',setupFilters);
+ safeRun('distances',setupDistanceControls);
+ safeRun('weather',setupWeather);
+ safeRun('recommendations',setupNow);
+ safeRun('map',buildMap);
+ safeRun('papa',setupPapa);
+ safeRun('share',setupShare);
+ safeRun('today',highlightToday);
+ safeRun('diagnostics',setupDiagnostics);
+ safeRun('service-worker',setupServiceWorker);
+ safeRun('links',validateExternalLinks);
+ safeRun('initial-filters',applySpotFilters);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
