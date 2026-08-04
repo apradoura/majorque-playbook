@@ -36,7 +36,7 @@ async function loadLiveWeather(coords=LIVE_DEFAULT){
     const murl=`https://marine-api.open-meteo.com/v1/marine?latitude=${coords.lat}&longitude=${coords.lon}&current=wave_height,wave_period,sea_surface_temperature&timezone=auto&cell_selection=sea`;
     const [wr,mr]=await Promise.all([fetch(wurl),fetch(murl)]);
     if(!wr.ok)throw new Error('weather');
-    const w=await wr.json(); const m=mr.ok?await mr.json():{}; const c=w.current||{},mc=m.current||{};
+    const w=await wr.json(); const m=mr.ok?await mr.json():{}; const c=w.current||{},mc=m.current||{}; currentConditions={temp:c.temperature_2m||0,wind:c.wind_speed_10m||0,gust:c.wind_gusts_10m||0,rain:c.precipitation||0,wave:mc.wave_height||0};
     els('liveTemp').textContent=c.temperature_2m!=null?`${Math.round(c.temperature_2m)} °C`:'--';
     els('liveWind').textContent=c.wind_speed_10m!=null?`${Math.round(c.wind_speed_10m)} km/h ${compass(c.wind_direction_10m)}`:'--';
     els('liveGust').textContent=c.wind_gusts_10m!=null?`${Math.round(c.wind_gusts_10m)} km/h`:'--';
@@ -102,3 +102,34 @@ document.querySelectorAll('#agendaGrid .day-date').forEach(d=>{if(fmt.includes(d
 if(navigator.share){
   const share=document.createElement('button');share.className='btn secondary';share.textContent='Partager l’app';share.addEventListener('click',()=>navigator.share({title:document.title,text:'Notre assistant Majorque',url:location.href.split('#')[0]}).catch(()=>{}));document.querySelector('.toolbar')?.appendChild(share);
 }
+
+
+// Itération 3 : moteur "Maintenant", carte légère et restauration actionnable
+let currentConditions={temp:null,wind:null,gust:null,rain:null,wave:null};
+let nowOrigin=HOTEL;
+const typeMood={plage:['Plage'],culture:['Ville','Village','Port'],marche:['Plage','Ville','Village','Port'],mer:['Plage','Expérience','Port'],soir:['Port','Ville','Plage']};
+function crowdPenalty(c){return c==='high'?22:c==='medium'?9:0}
+function timeOfDay(){const h=new Date().getHours();return h<11?'matin':h<17?'apres-midi':h<20?'fin de journee':'soir'}
+function candidateScore(card,mood,duration){
+ const dest={lat:Number(card.dataset.lat),lon:Number(card.dataset.lon)}; const km=haversineKm(nowOrigin,dest); const type=card.dataset.type; const crowd=card.dataset.crowd;
+ let score=100-Math.min(55,km*2.1)-crowdPenalty(crowd);
+ const allowed=typeMood[mood]||[]; if(mood!=='auto'&&!allowed.includes(type))score-=40;
+ const tod=timeOfDay(); if(tod==='soir'&&(type==='Port'||type==='Ville'))score+=24; if(tod==='matin'&&(type==='Plage'||type==='Village'))score+=12;
+ if(duration<=2&&km>12)score-=35; if(duration<=4&&km>28)score-=24; if(duration>=8&&km>35)score+=6;
+ const c=currentConditions; if(c.rain>=3&&(type==='Plage'||type==='Expérience'))score-=45; if((c.gust>=45||c.wind>=30||c.wave>=1.2)&&mood==='mer')score-=60; if(c.temp>=33&&type==='Ville'&&tod==='apres-midi')score-=25;
+ if(mood==='auto'){if(c.wind<=16&&c.wave<0.6&&(type==='Plage'||type==='Expérience'))score+=18;if(c.gust>=45||c.rain>=3){if(type==='Ville'||type==='Village')score+=20}}
+ return {score,km};
+}
+function renderNow(){
+ const duration=Number(document.getElementById('nowDuration')?.value||4),mood=document.getElementById('nowMood')?.value||'auto',box=document.getElementById('nowResults'),status=document.getElementById('nowStatus'); if(!box)return;
+ const cards=[...document.querySelectorAll('#spotsGrid .spot[data-lat]')].map(card=>({card,...candidateScore(card,mood,duration)})).sort((a,b)=>b.score-a.score).slice(0,3);
+ box.innerHTML=cards.map((x,i)=>{const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',route=c.querySelector('.route-link')?.href||'#',type=c.dataset.type,crowd=c.dataset.crowd;const reasons=[];reasons.push(`${formatDistance(x.km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`);reasons.push(crowd==='low'?'plutôt respirable':crowd==='medium'?'fréquenté mais gérable':'très fréquenté : horaire décisif');if(type==='Plage'&&currentConditions.wave<0.7)reasons.push('mer annoncée calme');return `<article class="card now-option"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank">Itinéraire</a><a class="link alt" href="#spots">Voir la fiche</a></div></article>`}).join('');
+ if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}. Les temps routiers réels restent calculés par Maps.`;
+}
+document.getElementById('nowGo')?.addEventListener('click',renderNow);
+document.getElementById('nowHotel')?.addEventListener('click',e=>{nowOrigin=HOTEL;document.getElementById('nowHotel').classList.add('active');document.getElementById('nowHere').classList.remove('active');renderNow()});
+document.getElementById('nowHere')?.addEventListener('click',()=>{if(!navigator.geolocation)return toast('Géolocalisation indisponible');navigator.geolocation.getCurrentPosition(p=>{nowOrigin={lat:p.coords.latitude,lon:p.coords.longitude,label:'votre position'};document.getElementById('nowHere').classList.add('active');document.getElementById('nowHotel').classList.remove('active');renderNow();toast('Suggestions recalculées')},()=>toast('Position non autorisée'),{enableHighAccuracy:true,timeout:10000,maximumAge:300000})});
+
+function buildMap(){const canvas=document.getElementById('mapCanvas'),detail=document.getElementById('mapDetail');if(!canvas||!detail)return;const cards=[...document.querySelectorAll('#spotsGrid .spot[data-lat]')];const bounds={minLat:39.25,maxLat:39.94,minLon:2.28,maxLon:3.46};cards.forEach((c,idx)=>{const lat=Number(c.dataset.lat),lon=Number(c.dataset.lon),type=(c.dataset.type||'Experience').toLowerCase().replace('é','e');const x=(lon-bounds.minLon)/(bounds.maxLon-bounds.minLon)*86+7,y=(bounds.maxLat-lat)/(bounds.maxLat-bounds.minLat)*82+8;const b=document.createElement('button');b.className=`map-marker ${type}`;b.style.left=`${Math.max(4,Math.min(96,x))}%`;b.style.top=`${Math.max(5,Math.min(95,y))}%`;b.title=c.querySelector('h3')?.textContent||'';b.setAttribute('aria-label',b.title);b.addEventListener('click',()=>{canvas.querySelectorAll('.map-marker').forEach(m=>m.classList.remove('active'));b.classList.add('active');const name=c.querySelector('h3')?.textContent,desc=c.querySelector('p')?.textContent,dist=c.querySelector('.distance-value')?.textContent,route=c.querySelector('.route-link')?.href,maps=c.querySelector('a[href*="maps/search"]')?.href;detail.innerHTML=`<span class="tag">${c.dataset.type}</span><h3>${name}</h3><p>${desc}</p><div class="metric"><span>Depuis l’hôtel</span><strong>${dist||'Voir Maps'}</strong></div><div class="metric"><span>Affluence</span><strong>${c.dataset.crowd==='low'?'Respirable':c.dataset.crowd==='medium'?'Fréquenté':'Très fréquenté'}</strong></div><div class="actions"><a class="link" href="${route}" target="_blank">Itinéraire</a>${maps?`<a class="link alt" href="${maps}" target="_blank">Maps</a>`:''}</div>`});canvas.appendChild(b)});}
+buildMap();
+renderNow();

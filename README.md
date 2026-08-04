@@ -27,3 +27,9 @@ Code de l'espace Papa : `1011`.
 - Espace Papa robuste
 - Partage natif
 - Mise en évidence du jour
+
+
+## Itération 3
+- moteur « Que faire maintenant ? »
+- carte interactive légère hors ligne
+- fiches restaurants avec réservation, téléphone, site et Maps
