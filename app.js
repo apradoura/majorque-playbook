@@ -8,10 +8,22 @@ let distanceOrigin = HOTEL;
 let nowOrigin = HOTEL;
 let currentConditions = {temp:null,wind:null,gust:null,rain:null,wave:null};
 let favOnly = false;
+let transportMode = 'car';
+let maxDriveMinutes = 45;
+const storage={
+ get(k){try{return localStorage.getItem(k)}catch{return null}},
+ set(k,v){try{localStorage.setItem(k,v)}catch{}},
+ remove(k){try{localStorage.removeItem(k)}catch{}}
+};
+function safeRun(name,fn){try{fn()}catch(err){console.error(`[Kairos:${name}]`,err);}}
 
 function toast(text, ms=2200){ const el=$('toast'); if(!el)return; el.textContent=text; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),ms); }
 function haversineKm(a,b){const R=6371,rad=x=>x*Math.PI/180,dLat=rad(b.lat-a.lat),dLon=rad(b.lon-a.lon),la1=rad(a.lat),la2=rad(b.lat);const h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
 function formatDistance(km){return km<1?`${Math.max(50,Math.round(km*1000/50)*50)} m`:`${km.toFixed(1)} km`;}
+function roadKm(km){return km*1.22;}
+function driveMinutes(km){return Math.max(4,Math.round((roadKm(km)/42*60)+5));}
+function activeTravelMode(card){if(transportMode==='walk')return 'walking';return 'driving';}
+function transportLabel(){return transportMode==='car'?'voiture':transportMode==='taxi'?'taxi':'marche';}
 function compass(deg){const d=['N','NE','E','SE','S','SO','O','NO'];return d[Math.round((deg||0)/45)%8];}
 function seaLabel(w){if(w==null)return '--';if(w<0.35)return 'très calme';if(w<0.7)return 'calme';if(w<1.2)return 'formée';return 'agitée';}
 function geolocationMessage(err){
@@ -49,15 +61,21 @@ function activatePanel(hash, scroll=true){
  if(scroll) window.scrollTo({top:0,behavior:'instant'});
 }
 function setupNavigation(){
- $$('.navbtn, .home-action-grid a[href^="#"], a[href="#spots"]').forEach(a=>a.addEventListener('click',e=>{
-  const h=a.getAttribute('href'); if(!h||!h.startsWith('#'))return; e.preventDefault(); history.replaceState(null,'',h); activatePanel(h);
- }));
- window.addEventListener('hashchange',()=>activatePanel(location.hash));
- activatePanel(location.hash||'#dashboard',false);
+ const sync=()=>activatePanel(location.hash||'#dashboard',false);
+ window.addEventListener('hashchange',sync);
+ document.addEventListener('click',e=>{
+  const a=e.target.closest('a[href^="#"]');
+  if(!a)return;
+  const h=a.getAttribute('href');
+  if(!h||h==='#')return;
+  // Keep native hash navigation; this remains functional even if another module fails.
+  setTimeout(()=>activatePanel(h,false),0);
+ });
+ sync();
 }
 function setupChecksAndFavorites(){
- $$('[data-check]').forEach(el=>{const k='check_'+el.dataset.check;el.checked=localStorage.getItem(k)==='1';el.addEventListener('change',()=>localStorage.setItem(k,el.checked?'1':'0'));});
- $$('.favbtn').forEach(btn=>{const k='fav_'+btn.dataset.fav;const sync=()=>btn.textContent=localStorage.getItem(k)==='1'?'★ Favori':'☆ Favori';sync();btn.addEventListener('click',()=>{localStorage.setItem(k,localStorage.getItem(k)==='1'?'0':'1');sync();applySpotFilters();toast(btn.textContent.startsWith('★')?'Ajouté aux favoris':'Retiré des favoris');});});
+ $$('[data-check]').forEach(el=>{const k='check_'+el.dataset.check;el.checked=storage.get(k)==='1';el.addEventListener('change',()=>storage.set(k,el.checked?'1':'0'));});
+ $$('.favbtn').forEach(btn=>{const k='fav_'+btn.dataset.fav;const sync=()=>btn.textContent=storage.get(k)==='1'?'★ Favori':'☆ Favori';sync();btn.addEventListener('click',()=>{storage.set(k,storage.get(k)==='1'?'0':'1');sync();applySpotFilters();toast(btn.textContent.startsWith('★')?'Ajouté aux favoris':'Retiré des favoris');});});
 }
 function selectedValue(name, fallback){return document.querySelector(`input[name="${name}"]:checked`)?.id?.replace(name.replace('-filter','')+'-','')||fallback;}
 function applySpotFilters(){
@@ -72,7 +90,7 @@ function applySpotFilters(){
   const normalized=(card.dataset.type||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const matchesType=type==='all'||normalized===type;
   const matchesCrowd=crowd==='all'||card.dataset.crowd===crowd;
-  const matchesFav=!favOnly||localStorage.getItem(key)==='1';
+  const matchesFav=!favOnly||storage.get(key)==='1';
   const visible=matchesText&&matchesType&&matchesCrowd&&matchesFav;
   card.classList.toggle('search-hidden',!visible); if(visible)shown++;
  });
@@ -103,8 +121,8 @@ async function loadLiveWeather(coords=LIVE_DEFAULT){
   currentConditions={temp:c.temperature_2m||0,wind:c.wind_speed_10m||0,gust:c.wind_gusts_10m||0,rain:c.precipitation||0,wave:mc.wave_height||0};
   const vals={liveTemp:c.temperature_2m!=null?`${Math.round(c.temperature_2m)} °C`:'--',liveWind:c.wind_speed_10m!=null?`${Math.round(c.wind_speed_10m)} km/h ${compass(c.wind_direction_10m)}`:'--',liveGust:c.wind_gusts_10m!=null?`${Math.round(c.wind_gusts_10m)} km/h`:'--',liveRain:c.precipitation!=null?`${c.precipitation.toFixed(1)} mm`:'--',liveWave:mc.wave_height!=null?`${mc.wave_height.toFixed(1)} m`:'--',livePeriod:mc.wave_period!=null?`${mc.wave_period.toFixed(0)} s`:'--',liveSeaTemp:mc.sea_surface_temperature!=null?`${mc.sea_surface_temperature.toFixed(0)} °C`:'--',liveSeaRead:seaLabel(mc.wave_height)};
   Object.entries(vals).forEach(([id,v])=>{if($(id))$(id).textContent=v;});
-  const msg=makeRecommendation(currentConditions);if(rec)rec.textContent=msg;if($('weatherUpdated'))$('weatherUpdated').textContent=`Mis à jour ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} - ${coords.name||'position actuelle'}`;if(dot)dot.className='status-dot ok';localStorage.setItem('liveCache',JSON.stringify({t:Date.now(),coords,w:c,m:mc,msg}));
- }catch(e){const cached=localStorage.getItem('liveCache');if(cached){const x=JSON.parse(cached);if(rec)rec.textContent=`Hors ligne - dernière lecture : ${x.msg}`;if(dot)dot.className='status-dot warn';if($('weatherUpdated'))$('weatherUpdated').textContent='Données en cache.';}else{if(rec)rec.textContent='Prévisions indisponibles. Utilisez Windy.';if(dot)dot.className='status-dot bad';}}
+  const msg=makeRecommendation(currentConditions);if(rec)rec.textContent=msg;if($('weatherUpdated'))$('weatherUpdated').textContent=`Mis à jour ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} - ${coords.name||'position actuelle'}`;if(dot)dot.className='status-dot ok';storage.set('liveCache',JSON.stringify({t:Date.now(),coords,w:c,m:mc,msg}));
+ }catch(e){const cached=storage.get('liveCache');if(cached){const x=JSON.parse(cached);if(rec)rec.textContent=`Hors ligne - dernière lecture : ${x.msg}`;if(dot)dot.className='status-dot warn';if($('weatherUpdated'))$('weatherUpdated').textContent='Données en cache.';}else{if(rec)rec.textContent='Prévisions indisponibles. Utilisez Windy.';if(dot)dot.className='status-dot bad';}}
 }
 function setupWeather(){
  $('refreshLive')?.addEventListener('click',()=>loadLiveWeather(LIVE_DEFAULT));
@@ -130,16 +148,15 @@ function estimatedTravelHours(card,km){
  return walking ? km/4.5 : km/38 + 0.12;
 }
 function isEligible(card,mood,duration,km){
- const cfg=moodConfig[mood]||moodConfig.auto;
- const type=card.dataset.type||'';
- if(mood!=='auto'&&!cfg.types.includes(type)) return false;
- if(cfg.walkingOnly && card.dataset.travelmode!=='walking' && km>4.5) return false;
- const oneWay=estimatedTravelHours(card,km);
- const minimumStay = type==='Expérience' ? 1.25 : type==='Ville'||type==='Village' ? 1 : 0.75;
+ const type=card.dataset.type||'Lieu',cfg=moodConfig[mood]||moodConfig.auto;
+ if(cfg.types && !cfg.types.includes(type)) return false;
+ if(mood==='marche' && km>7) return false;
+ if(transportMode==='walk' && km>Math.min(12,duration*4.5/2)) return false;
+ const dmin=driveMinutes(km);
+ if(transportMode!=='walk' && maxDriveMinutes<999 && dmin>maxDriveMinutes) return false;
+ const oneWay=travelHours(card,km),minimumStay=type==='Plage'?0.8:(type==='Ville'||type==='Village'?1:0.6);
  if((2*oneWay+minimumStay)>duration) return false;
- if(duration<=2 && km>15) return false;
- if(duration<=4 && km>35) return false;
- if(mood==='mer' && (currentConditions.gust>=45||currentConditions.wind>=30||currentConditions.wave>=1.2) && type==='Expérience') return false;
+ if(duration<=2 && transportMode!=='walk' && dmin>35) return false;
  return true;
 }
 function candidateScore(card,mood,duration){
@@ -150,7 +167,7 @@ function candidateScore(card,mood,duration){
  if(mood==='plage'&&type==='Plage')score+=32;
  if(mood==='culture'&&(type==='Ville'||type==='Village'))score+=34;
  if(mood==='culture'&&type==='Port')score+=14;
- if(mood==='marche'&&card.dataset.travelmode==='walking')score+=42;
+ if(mood==='marche'&&km<=7)score+=42;
  if(mood==='mer'&&type==='Expérience')score+=38;
  if(mood==='mer'&&type==='Plage')score+=22;
  if(mood==='soir'&&(type==='Port'||type==='Ville'))score+=36;
@@ -159,6 +176,9 @@ function candidateScore(card,mood,duration){
  if(tod==='matin'&&(type==='Plage'||type==='Village'))score+=10;
  if(duration===2&&km<3)score+=18;
  if(duration===4&&km<15)score+=10;
+ if(transportMode==='car'&&km>=12&&(type==='Ville'||type==='Village'||type==='Plage'))score+=14;
+ if(transportMode==='taxi'&&km>25)score-=18;
+ if(transportMode==='walk'&&km<4)score+=20;
  if(currentConditions.rain>=3&&(type==='Plage'||type==='Expérience'))score-=50;
  if(currentConditions.temp>=33&&(type==='Ville'||type==='Village')&&tod==='après-midi')score-=16;
  if(mood==='auto'){
@@ -170,8 +190,9 @@ function candidateScore(card,mood,duration){
 }
 function recommendationReasons(card,mood,duration,km){
  const type=card.dataset.type||'Lieu',crowd=card.dataset.crowd||'medium';
- const reasons=[`${formatDistance(km)} à vol d’oiseau depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`];
- if(mood==='marche') reasons.push(card.dataset.travelmode==='walking'?'accessible à pied depuis votre départ':'balade possible à proximité');
+ const dmin=driveMinutes(km);
+ const reasons=[transportMode==='walk'?`${formatDistance(km)} en distance directe depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}`:`environ ${dmin} min en ${transportLabel()} (estimation ; Maps affine)`];
+ if(mood==='marche') reasons.push(km<=4?'accessible à pied facilement':'balade longue mais compatible');
  if(mood==='culture') reasons.push(type==='Village'?'village cohérent avec votre envie de découverte':type==='Ville'?'contenu urbain et culturel':'promenade de port');
  if(mood==='plage') reasons.push('baignade prioritaire pour ce filtre');
  if(mood==='mer') reasons.push(type==='Expérience'?'activité nautique prioritaire':'accès mer compatible');
@@ -192,12 +213,12 @@ function renderNow(){
   const cards=ranked.slice(0,3);
   if(!cards.length) throw new Error('Aucune option réaliste pour cette combinaison. Augmentez le temps disponible ou changez d’envie.');
   box.innerHTML=cards.map((x,i)=>{
-   const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:Number(c.dataset.lat),lon:Number(c.dataset.lon)},route=mapsDirections(dest,nowOrigin,c.dataset.travelmode||'driving'),type=c.dataset.type||'Lieu';
+   const c=x.card,name=c.querySelector('h3')?.textContent||'Lieu',desc=c.querySelector('p')?.textContent||'',dest={lat:Number(c.dataset.lat),lon:Number(c.dataset.lon)},route=mapsDirections(dest,nowOrigin,activeTravelMode(c)),type=c.dataset.type||'Lieu';
    const reasons=recommendationReasons(c,mood,duration,x.km);
    return `<article class="card now-option" data-result-type="${type}" data-result-name="${name}"><div class="now-rank">${i+1}</div><span class="tag">${type}</span><h3>${name}</h3><p>${desc}</p><ul class="reason-list">${reasons.map(r=>`<li>${r}</li>`).join('')}</ul><div class="actions"><a class="link" href="${route}" target="_blank" rel="noopener">Itinéraire</a><button class="link alt" type="button" data-open-spots="1">Voir les lieux</button></div></article>`;
   }).join('');
   box.querySelectorAll('[data-open-spots]').forEach(b=>b.addEventListener('click',()=>{history.replaceState(null,'','#spots');activatePanel('#spots');}));
-  if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, envie « ${(moodConfig[mood]||moodConfig.auto).label} », départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
+  if(status)status.innerHTML=`<strong>Lecture :</strong> ${timeOfDay()}, ${duration===2?'2 heures':duration===4?'demi-journée':'journée'}, envie « ${(moodConfig[mood]||moodConfig.auto).label} », ${transportLabel()}, trajet maximal ${maxDriveMinutes>=999?'toute l’île':maxDriveMinutes+' min'}, départ depuis ${nowOrigin===HOTEL?'l’hôtel':'votre position'}.`;
  }catch(err){
   if(box)box.innerHTML=`<article class="card full"><h3>Impossible de calculer les options</h3><p>${err.message||'Erreur inconnue'}</p></article>`;
   if(status)status.innerHTML='<strong>Erreur :</strong> la recommandation n’a pas pu être calculée.';
@@ -206,9 +227,14 @@ function renderNow(){
 }
 window.KairosApp={renderNow,activatePanel};
 function setupNow(){
+ try{transportMode=localStorage.getItem('kairosTransport')||'car';maxDriveMinutes=Number(localStorage.getItem('kairosMaxDrive')||45);}catch{}
+ if($('nowTransport'))$('nowTransport').value=transportMode;
+ if($('nowMaxDrive'))$('nowMaxDrive').value=String(maxDriveMinutes);
  $('nowGo')?.addEventListener('click',renderNow);
  $('nowDuration')?.addEventListener('change',renderNow);
  $('nowMood')?.addEventListener('change',renderNow);
+ $('nowTransport')?.addEventListener('change',e=>{transportMode=e.target.value;try{localStorage.setItem('kairosTransport',transportMode);}catch{}renderNow();});
+ $('nowMaxDrive')?.addEventListener('change',e=>{maxDriveMinutes=Number(e.target.value);try{localStorage.setItem('kairosMaxDrive',String(maxDriveMinutes));}catch{}renderNow();});
  $('nowHotel')?.addEventListener('click',()=>{nowOrigin=HOTEL;$('nowHotel')?.classList.add('active');$('nowHere')?.classList.remove('active');renderNow();});
  $('nowHere')?.addEventListener('click',()=>requestPosition(p=>{nowOrigin={lat:p.coords.latitude,lon:p.coords.longitude,label:'votre position'};$('nowHere')?.classList.add('active');$('nowHotel')?.classList.remove('active');renderNow();toast('Suggestions recalculées');},err=>{$('locationHelp')?.setAttribute('open','');toast(geolocationMessage(err),3500);}));
  renderNow();
@@ -276,7 +302,10 @@ function runDiagnostics(){
  t('Liens sans destination',badLinks.length===0,badLinks.length?`${badLinks.length} lien(s)`:'aucun');
  const source=$$('#spotsGrid .spot[data-lat]');
  const top=(mood,duration)=>source.map(card=>({card,...candidateScore(card,mood,duration)})).filter(x=>Number.isFinite(x.score)).sort((a,b)=>b.score-a.score).slice(0,3);
- const walk=top('marche',2),culture=top('culture',4),beach=top('plage',2),sea=top('mer',4);
+ const savedTransport=transportMode,savedMax=maxDriveMinutes;
+ transportMode='walk';maxDriveMinutes=45;const walk=top('marche',2);
+ transportMode='car';maxDriveMinutes=45;const culture=top('culture',4),beach=top('plage',2),sea=top('mer',4);
+ transportMode=savedTransport;maxDriveMinutes=savedMax;
  t('Moteur - Marcher',walk.length>0&&walk.every(x=>x.card.dataset.travelmode==='walking'),walk.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
  t('Moteur - Culture',culture.length>0&&culture.every(x=>['Ville','Village','Port'].includes(x.card.dataset.type)),culture.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
  t('Moteur - Plage',beach.length>0&&beach.every(x=>x.card.dataset.type==='Plage'),beach.map(x=>x.card.querySelector('h3')?.textContent).join(', '));
@@ -288,9 +317,25 @@ function runDiagnostics(){
  return tests;
 }
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.0.3');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.2.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
-function init(){document.body.classList.add('js-ready');setupNavigation();setupChecksAndFavorites();setupFilters();setupDistanceControls();setupWeather();setupNow();buildMap();setupPapa();setupShare();highlightToday();setupDiagnostics();setupServiceWorker();validateExternalLinks();applySpotFilters();}
+function init(){
+ document.body.classList.add('js-ready');
+ safeRun('navigation',setupNavigation);
+ safeRun('favorites',setupChecksAndFavorites);
+ safeRun('filters',setupFilters);
+ safeRun('distances',setupDistanceControls);
+ safeRun('weather',setupWeather);
+ safeRun('recommendations',setupNow);
+ safeRun('map',buildMap);
+ safeRun('papa',setupPapa);
+ safeRun('share',setupShare);
+ safeRun('today',highlightToday);
+ safeRun('diagnostics',setupDiagnostics);
+ safeRun('service-worker',setupServiceWorker);
+ safeRun('links',validateExternalLinks);
+ safeRun('initial-filters',applySpotFilters);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
