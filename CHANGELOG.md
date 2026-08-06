@@ -1,7 +1,8 @@
-# Changelog 1.4.0
+# Changelog
 
-- Ajout d'un onglet Itinéraires avec 6 journées cohérentes.
-- Recalcul des scores selon la voiture, août, famille, trajet et fiabilité logistique.
-- Ajout de Fornalutx, Sa Calobra / Torrent de Pareis, Es Trenc, Cala Llombards et Cala Tuent.
-- Ajout de sources officielles et liens Maps sur les nouvelles fiches.
-- Moteur Kairos enrichi automatiquement par les nouveaux lieux et scores.
+## 1.5.0
+- Nouvel onglet Activités du jour.
+- Horodatage local et filtrage par jour/type.
+- Marchés et événements officiels du 6 au 13 août 2026.
+- Aperçu dynamique sur le tableau de bord.
+- Liens Maps et sources officielles.
