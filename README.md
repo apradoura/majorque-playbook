@@ -1,8 +1,6 @@
-# Kairos Travel - Majorque 1.2.0
+# Kairos Travel - Majorque 1.4.0
 
-PWA familiale. Mode voiture actif par défaut.
+PWA statique pour GitHub Pages. Décompresser et déposer tout le contenu à la racine du dépôt.
 
+Nouveauté : scores contextuels avec voiture et itinéraires optimisés.
 Code Papa : 1512.
-
-Après publication, ouvrir une fois :
-`https://apradoura.github.io/majorque-playbook/?v=1.2.0#dashboard`
