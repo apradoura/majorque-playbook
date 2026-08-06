@@ -1,8 +1,6 @@
-# Changelog
-
-## 1.5.0
-- Nouvel onglet Activités du jour.
-- Horodatage local et filtrage par jour/type.
-- Marchés et événements officiels du 6 au 13 août 2026.
-- Aperçu dynamique sur le tableau de bord.
-- Liens Maps et sources officielles.
+# 1.6.0
+- Nouvel onglet Expériences avec catalogue sourcé et filtres envie / durée / énergie.
+- 20 familles d'expériences: mer, adrénaline, nature, famille, découverte, gastronomie, exceptionnel.
+- Bouton Surprends-nous.
+- Chaque activité distingue la proposition stable de la disponibilité opérateur à reconfirmer.
+- Navigation et cache PWA versionnés 1.6.0.
