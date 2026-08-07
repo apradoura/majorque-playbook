@@ -1,3 +1,12 @@
+# 2.0.1 — Contraintes Kairos
+
+- H2O Scuba Academy confirmé : Discover Scuba Diving réalisé à Camp de Mar, juste à côté du centre, profondeur maximale 4–6 m.
+- Ajout d’un moteur de contraintes locales : une zone peut être préservée jusqu’à une date spéciale et automatiquement retirée des recommandations.
+- Contrainte active par défaut : préserver Camp de Mar jusqu’au 10 août pour le baptême de plongée.
+- Préférence active par défaut : éviter les spots explicitement sans services lorsque la sortie implique plage/snorkeling.
+- Ajout de l’envie « Snorkeling » dans Kairos.
+- Ajout de Cala Santanyí et Cala s’Almunia au corpus de lieux, avec sources officielles.
+
 # Changelog
 
 ## 2.0.0

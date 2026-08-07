@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.0.1",
   "papa": {
     "preserved": true,
     "code_hash": "66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898",
@@ -14,5 +14,11 @@
   ],
   "legacy_panels_preserved": true,
   "experience_first_home": true,
-  "source_policy": "facts sourced; Kairos rankings editorial; live availability must be verified"
+  "source_policy": "facts sourced; Kairos rankings editorial; live availability must be verified",
+  "constraint_engine": true,
+  "preserved_zone": "Camp de Mar until 2026-08-10",
+  "new_spots": [
+    "Cala Santanyi",
+    "Cala s Almunia"
+  ]
 }
