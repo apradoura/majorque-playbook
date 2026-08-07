@@ -1,5 +1,5 @@
 {
-  "version": "2.0.1",
+  "version": "2.0.3",
   "papa": {
     "preserved": true,
     "code_hash": "66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898",
@@ -20,5 +20,15 @@
   "new_spots": [
     "Cala Santanyi",
     "Cala s Almunia"
+  ],
+  "routing": {
+    "controlled_hash_navigation": true,
+    "nested_anchor_scroll_after_panel_activation": true,
+    "browser_back_forward": true,
+    "home_deeplinks_audited": true
+  },
+  "constraints_preserved": [
+    "preserve Camp de Mar until 2026-08-10",
+    "no-picnic preference"
   ]
 }

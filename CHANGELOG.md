@@ -1,3 +1,14 @@
+# Changelog
+
+## 2.0.3 — Navigation profonde fiabilisée
+- Corrige le bug mobile où un clic sur une collection (Plages, Adrénaline, Mer, etc.) pouvait afficher le bas de Découvrir au lieu de la cible.
+- Le routeur active désormais le bon panneau AVANT de calculer le scroll vers la sous-section.
+- Navigation interne sans scroll natif concurrent : History API + routage contrôlé.
+- Retour/avance navigateur et ouverture directe d’une URL avec hash gérés.
+- Deep-links Home : snorkeling, adrénaline, plages, mer et famille pointent vers leur collection exacte.
+- Conserve le moteur de contraintes 2.0.1 : Camp de Mar préservé jusqu’au 10 août et préférence sans pique-nique.
+- Espace Papa conservé, code 1512 et verrouillage automatique.
+
 # 2.0.1 — Contraintes Kairos
 
 - H2O Scuba Academy confirmé : Discover Scuba Diving réalisé à Camp de Mar, juste à côté du centre, profondeur maximale 4–6 m.

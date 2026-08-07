@@ -170,16 +170,16 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <a class="navbtn" href="#secrets">🔐 Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="discover-head"><div><span class="eyebrow2">MAJORQUE · PLAYBOOK 2.0.1</span><h2>Qu’est-ce qui vous ferait kiffer ?</h2><p>Choisissez d’abord avec les yeux. Kairos vérifie ensuite trajet, météo, âge, disponibilité et contraintes réelles.</p></div><a class="btn" href="#now">⚡ Que fait-on aujourd’hui ?</a></div>
+<div class="discover-head"><div><span class="eyebrow2">MAJORQUE · PLAYBOOK 2.0.3</span><h2>Qu’est-ce qui vous ferait kiffer ?</h2><p>Choisissez d’abord avec les yeux. Kairos vérifie ensuite trajet, météo, âge, disponibilité et contraintes réelles.</p></div><a class="btn" href="#now">⚡ Que fait-on aujourd’hui ?</a></div>
 <div class="experience-entry-grid">
-<a class="experience-entry hero-entry" href="#experiences"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-salmunia-img0.jpg" alt="Snorkeling à Majorque"><span><b>🤿 Explorer sous l’eau</b><small>Snorkeling · baptême de plongée · réserves marines</small></span></a>
-<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/articulo-mallorca-turismo-activo-img0.jpg" alt="Activités adrénaline à Majorque"><span><b>🤸 Se faire peur un peu</b><small>Coasteering · canyoning · escalade · grottes</small></span></a>
-<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-pi-img0.jpg" alt="Criques de Majorque"><span><b>🏝️ Trouver une crique incroyable</b><small>Eau turquoise · sauvage · baignade · snorkeling</small></span></a>
-<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/articulo-mallorca-isla-de-cabrera--todo-lo-que-debes-saber-img3.jpg" alt="Sorties mer à Majorque"><span><b>⛵ Partir en mer</b><small>Bateau · kayak · Cabrera · sunset</small></span></a>
+<a class="experience-entry hero-entry" href="#snork-top"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-salmunia-img0.jpg" alt="Snorkeling à Majorque"><span><b>🤿 Explorer sous l’eau</b><small>Snorkeling · baptême de plongée · réserves marines</small></span></a>
+<a class="experience-entry" href="#top-adrenaline"><img src="https://media.illesbalears.travel/articulo-mallorca-turismo-activo-img0.jpg" alt="Activités adrénaline à Majorque"><span><b>🤸 Se faire peur un peu</b><small>Coasteering · canyoning · escalade · grottes</small></span></a>
+<a class="experience-entry" href="#top-beaches"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-pi-img0.jpg" alt="Criques de Majorque"><span><b>🏝️ Trouver une crique incroyable</b><small>Eau turquoise · sauvage · baignade · snorkeling</small></span></a>
+<a class="experience-entry" href="#top-sea"><img src="https://media.illesbalears.travel/articulo-mallorca-isla-de-cabrera--todo-lo-que-debes-saber-img3.jpg" alt="Sorties mer à Majorque"><span><b>⛵ Partir en mer</b><small>Bateau · kayak · Cabrera · sunset</small></span></a>
 <a class="experience-entry" href="#trips"><img src="https://media.illesbalears.travel/articulo-mallorca-serra-de-tramuntana-img0.jpg" alt="Serra de Tramuntana"><span><b>⛰️ Majorque sauvage</b><small>Tramuntana · routes panoramiques · randonnées</small></span></a>
 <a class="experience-entry" href="#territoires"><img src="https://media.illesbalears.travel/rrtt-mallorca-pueblo-valldemossa-img0.jpg" alt="Villages de Majorque"><span><b>🏘️ Explorer & comprendre</b><small>Villages · Palma · patrimoine · marchés</small></span></a>
 </div>
-<div class="collection-strip"><h3>Collections pour choisir vite</h3><div class="collection-row"><a href="#experiences">🔥 Must do</a><a href="#experiences">👀 Les enfants vont adorer</a><a href="#map">📍 À proximité</a><a href="#trips">🚗 Ça vaut le trajet</a><a href="#events">🌅 Pour aujourd’hui</a><a href="#restaurants">🍴 Bien manger</a></div></div>
+<div class="collection-strip"><h3>Collections pour choisir vite</h3><div class="collection-row"><a href="#experiences">🔥 Must do</a><a href="#top-family">👀 Les enfants vont adorer</a><a href="#map">📍 À proximité</a><a href="#trips">🚗 Ça vaut le trajet</a><a href="#events">🌅 Pour aujourd’hui</a><a href="#restaurants">🍴 Bien manger</a></div></div>
 <div class="trust-card"><div><b>Base sourcée, recommandation contextualisée</b><p>Les faits viennent des sources officielles, institutionnelles ou opérateurs vérifiés. Les classements restent éditoriaux Kairos. Une disponibilité du jour n’est jamais supposée.</p></div><a href="#experiences">Voir le corpus →</a></div>
 <div class="update-banner" hidden="" id="updateBanner"><strong>Nouvelle version disponible.</strong><button class="btn small" id="applyUpdate">Mettre à jour maintenant</button></div>
 </section>
@@ -497,24 +497,58 @@ function refreshDistances(origin){
  });
 }
 
-function activatePanel(hash, scroll=true){
- const id=(hash||location.hash||'#dashboard').replace('#','')||'dashboard';
- const target=$(id)||$('dashboard');
+function resolveRoute(hash){
+ const raw=(hash||location.hash||'#dashboard');
+ let id='dashboard';
+ try{id=decodeURIComponent(raw.replace(/^#/,'')||'dashboard');}catch(_){id=raw.replace(/^#/,'')||'dashboard';}
+ const anchor=$(id);
+ const target=(anchor?.classList.contains('app-panel')) ? anchor : (anchor?.closest('.app-panel') || $('dashboard'));
+ return {id,anchor,target};
+}
+function scrollToRoute(anchor,target,smooth=false){
+ // The target panel must be visible before calculating the anchor position.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  const el=anchor||target;
+  if(!el)return;
+  const sticky=$('nav')?.offsetHeight||0;
+  const top=Math.max(0,window.scrollY+el.getBoundingClientRect().top-sticky-12);
+  window.scrollTo({top,behavior:smooth?'smooth':'auto'});
+ }));
+}
+function activatePanel(hash, scroll=true, smooth=false){
+ const {anchor,target}=resolveRoute(hash);
  $$('.app-panel').forEach(sec=>sec.classList.toggle('active-panel',sec===target));
  $$('.navbtn').forEach(x=>x.classList.toggle('active',x.getAttribute('href')==='#'+target.id));
- if(target.id==='map'){requestAnimationFrame(()=>{buildMap();requestAnimationFrame(()=>leafletMap?.invalidateSize(true));setTimeout(()=>leafletMap?.invalidateSize(true),220);});}
- if(scroll) window.scrollTo({top:0,behavior:'instant'});
+ if(target.id==='map'){
+  requestAnimationFrame(()=>{
+   buildMap();
+   requestAnimationFrame(()=>leafletMap?.invalidateSize(true));
+   setTimeout(()=>leafletMap?.invalidateSize(true),220);
+  });
+ }
+ if(scroll)scrollToRoute(anchor,target,smooth);
+ return {anchor,target};
+}
+function navigateTo(hash,{push=true,smooth=true}={}){
+ const h=(hash&&hash.startsWith('#'))?hash:'#dashboard';
+ if(push){
+  if(location.hash!==h)history.pushState(null,'',h);
+  else history.replaceState(null,'',h);
+ }
+ activatePanel(h,true,smooth);
 }
 function setupNavigation(){
- const sync=()=>activatePanel(location.hash||'#dashboard',false);
+ if('scrollRestoration' in history)history.scrollRestoration='manual';
+ const sync=()=>activatePanel(location.hash||'#dashboard',true,false);
  window.addEventListener('hashchange',sync);
+ window.addEventListener('popstate',sync);
  document.addEventListener('click',e=>{
   const a=e.target.closest('a[href^="#"]');
   if(!a)return;
   const h=a.getAttribute('href');
   if(!h||h==='#')return;
-  // Keep native hash navigation; this remains functional even if another module fails.
-  setTimeout(()=>activatePanel(h,false),0);
+  e.preventDefault();
+  navigateTo(h,{push:true,smooth:true});
  });
  sync();
 }
