@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.0.0
+- Refonte experience-first : Découvrir devient la home photo-first.
+- Navigation réduite à Découvrir, Kairos, Explorer, Notre séjour, Papa.
+- Les anciennes vues restent accessibles depuis les collections et fiches : aucune donnée supprimée.
+- Collections Must do / famille / proximité / trajet / aujourd’hui / food.
+- Distinction visible entre corpus sourcé et recommandation Kairos.
+- Espace Papa conservé, code 1512, auto-verrouillage 15 min.
+- Carte Leaflet et géolocalisation conservées.
+
+# 1.9.1 — Explorer lisible et carte robuste
+
+- Corrige les filtres blancs illisibles : couleurs par catégorie + icônes.
+- Carte Explorer en plein cadre sur mobile et desktop.
+- Correction du rendu Leaflet après ouverture d’un onglet initialement masqué (invalidateSize après activation).
+- Marqueurs colorés selon la catégorie.
+- Boutons Autour de moi / Voir toute l’île rendus lisibles sur fond clair.
+- Service worker versionné pour forcer le rafraîchissement.
+
+# Changelog
+
 ## 1.8.0 - Snorkeling documente
 - Ajout d'un Top 5 snorkeling sourcé avec photos officielles.
 - Classement : Illa del Toro, Cabrera, réserve du Llevant, Cala s'Almunia, Cala Santanyí.

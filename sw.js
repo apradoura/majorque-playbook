@@ -1,4 +1,4 @@
-const CACHE = 'kairos-majorque-1.9.0-complete';
+const CACHE = 'kairos-majorque-2.0.0';
 const CORE = [
   './',
   './index.html',

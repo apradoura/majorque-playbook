@@ -1,17 +1,18 @@
 {
-  "version": "1.9.0",
-  "status": "source-audited",
-  "verified_at": "2026-08-07",
-  "checks": [
-    "javascript syntax",
-    "duplicate ids",
-    "internal anchors",
-    "PWA package complete",
-    "snorkeling source links",
-    "experience catalogue source links",
-    "diving category and junior caution",
-    "markets and gastronomy official source coverage"
+  "version": "2.0.0",
+  "papa": {
+    "preserved": true,
+    "code_hash": "66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898",
+    "auto_lock_minutes": 15
+  },
+  "navigation": [
+    "dashboard",
+    "now",
+    "map",
+    "agenda",
+    "secrets"
   ],
-  "source_policy": "Official/institutional sources first. Kairos rankings are editorial and are not presented as official rankings.",
-  "notes": "Dynamic availability, operator slots, sea state, prices and age/medical acceptance must be reconfirmed with the operator before departure."
+  "legacy_panels_preserved": true,
+  "experience_first_home": true,
+  "source_policy": "facts sourced; Kairos rankings editorial; live availability must be verified"
 }

@@ -1,3 +1,3 @@
-# Kairos Travel - Majorque
+# Majorque Playbook 2.0.0
 
-Version 1.8.0. PWA familiale Majorque avec moteur de recommandation, Explorer, expériences, événements, itinéraires, mode Papa et Top 5 snorkeling documenté avec photos et sources officielles.
+PWA familiale experience-first. Navigation principale : Découvrir, Kairos, Explorer, Notre séjour, Papa. Les vues détaillées historiques restent accessibles par les cartes et collections. Espace Papa conservé et verrouillé.

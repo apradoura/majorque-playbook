@@ -104,8 +104,33 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 .trip-hero{background:linear-gradient(135deg,#17363b,#276b71);color:white;border-radius:20px;padding:18px;margin-bottom:14px}.trip-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.trip-card{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}.trip-card h3{margin:7px 0}.trip-flow{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.trip-stop{background:#eef5f4;border-radius:999px;padding:6px 9px;font-size:.82rem;font-weight:750}.trip-verdict{background:#f7faf9;border-left:4px solid var(--accent);padding:10px 12px;border-radius:10px;margin:10px 0}.score-basis{font-size:.82rem;color:var(--muted);margin-top:6px}.decision-badge{display:inline-block;padding:6px 9px;border-radius:999px;font-weight:800;font-size:.8rem;background:#e7f4ee;color:#235c47}.decision-badge.warn{background:#fff1dc;color:#7c5017}.decision-badge.no{background:#fde9e7;color:#9c3730}
 .event-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.event-toolbar select{max-width:220px}.event-card{border-left:5px solid var(--accent)}.event-card.live{border-left-color:#2c8a63}.event-card.soon{border-left-color:#d39a28}.event-card.past{opacity:.62}.event-meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.event-time{font-weight:800;font-size:1.02rem}.event-source{font-size:.82rem;color:var(--muted)}.event-count{font-weight:800}.event-empty{padding:18px;text-align:center;color:var(--muted)}
 
-/* 1.8.0 Explorer: vraie carte interactive */
-.explore-toolbar,.explore-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.explore-toolbar .btn.active{background:var(--ink);color:#fff}.real-map-layout{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(270px,1fr);gap:14px}#realMap{height:62vh;min-height:480px;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:#d9ece9}.leaflet-popup-content{font-family:inherit}.map-popup-title{font-weight:900;font-size:1rem;margin-bottom:4px}.map-pin{background:var(--accent);border:2px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35)}@media(max-width:800px){.real-map-layout{grid-template-columns:1fr}#realMap{height:58vh;min-height:430px}.real-map-layout .map-detail{position:static}}
+/* 2.0.0 Explorer: lisibilite + vraie carte plein cadre */
+.explore-toolbar,.explore-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.explore-toolbar .btn{background:#fffdf8;color:#17363b;border:1px solid #d8dedc;box-shadow:0 2px 7px rgba(23,54,59,.05)}
+.explore-toolbar .btn.active{background:#17363b;color:#fff;border-color:#17363b}
+.explore-toolbar .btn[data-map-filter="Plage"]{color:#087f9f;border-color:#b9dfe8}
+.explore-toolbar .btn[data-map-filter="adrenaline"]{color:#d94d2f;border-color:#efc9c0}
+.explore-toolbar .btn[data-map-filter="sea"]{color:#176ca8;border-color:#c7dbea}
+.explore-toolbar .btn[data-map-filter="nature"]{color:#4c8d2e;border-color:#cfe0c5}
+.explore-toolbar .btn[data-map-filter="culture"]{color:#7350a3;border-color:#d7cbe7}
+.explore-toolbar .btn[data-map-filter="family"]{color:#e77a19;border-color:#efd2b6}
+.explore-toolbar .btn[data-map-filter="food"]{color:#a96a17;border-color:#ecd9ba}
+.explore-toolbar .btn[data-map-filter="event"]{color:#d84b72;border-color:#efc7d3}
+.explore-toolbar .btn.active[data-map-filter]:not([data-map-filter="all"]){color:#fff}
+.explore-toolbar .btn.active[data-map-filter="Plage"]{background:#087f9f;border-color:#087f9f}
+.explore-toolbar .btn.active[data-map-filter="adrenaline"]{background:#d94d2f;border-color:#d94d2f}
+.explore-toolbar .btn.active[data-map-filter="sea"]{background:#176ca8;border-color:#176ca8}
+.explore-toolbar .btn.active[data-map-filter="nature"]{background:#4c8d2e;border-color:#4c8d2e}
+.explore-toolbar .btn.active[data-map-filter="culture"]{background:#7350a3;border-color:#7350a3}
+.explore-toolbar .btn.active[data-map-filter="family"]{background:#e77a19;border-color:#e77a19}
+.explore-toolbar .btn.active[data-map-filter="food"]{background:#a96a17;border-color:#a96a17}
+.explore-toolbar .btn.active[data-map-filter="event"]{background:#d84b72;border-color:#d84b72}
+.explore-actions .btn.secondary{background:#fffdf8;color:#0f6b67;border:1px solid #cbdad7}
+.real-map-layout{display:block}.real-map-layout .map-detail{margin-top:14px}
+#realMap{width:100%;height:66vh;min-height:560px;border:1px solid #c7d9d7;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);background:#d9ece9;position:relative}
+#realMap.leaflet-container{width:100%;height:66vh;min-height:560px}
+.leaflet-popup-content{font-family:inherit}.map-popup-title{font-weight:900;font-size:1rem;margin-bottom:4px}.map-pin{background:var(--accent);border:2px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+@media(max-width:800px){#realMap,#realMap.leaflet-container{height:62vh;min-height:520px;border-radius:22px}.real-map-layout .map-detail{position:static}.explore-toolbar .btn{padding:9px 12px}.explore-actions{display:grid;grid-template-columns:1fr 1fr}.explore-actions .btn{width:100%}.explore-actions .muted{grid-column:1/-1}}
 
 /* 1.8.0 - Top snorkeling documente */
 .snork-hero{margin:16px 0 18px;padding:18px;border-radius:20px;background:linear-gradient(135deg,#083c4b,#0d6f77);color:white;box-shadow:var(--shadow)}
@@ -119,8 +144,14 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 @media(max-width:800px){.snork-card,.snork-card.featured{grid-column:1/-1;display:block}.snork-card.featured .snork-photo{height:230px;min-height:0}}
 
 
-/* 1.9.0 - Top 5 visuels par categorie */
+/* 2.0.0 - Top 5 visuels par categorie */
 .topcats{margin:24px 0}.topcats>h3{font-size:1.5rem;margin-bottom:5px}.topcat-nav{display:flex;gap:8px;overflow:auto;padding:8px 0 14px}.topcat-nav a{white-space:nowrap;padding:9px 12px;border-radius:999px;background:#edf3f2;font-weight:800}.topcat{margin:22px 0 30px;scroll-margin-top:85px}.topcat-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-bottom:10px}.topcat-title h3{margin:0}.visual-five{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:10px;overflow-x:auto;padding-bottom:5px}.visual-pick{min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}.visual-pick img{width:100%;height:135px;object-fit:cover;display:block;background:#dbe7e6}.visual-pick div{padding:11px}.visual-pick b{display:block;margin-bottom:4px}.visual-pick small{color:var(--muted);line-height:1.35}.visual-pick a{font-size:.76rem;font-weight:800}.topcat-note{font-size:.78rem;color:var(--muted);margin-top:8px}@media(max-width:800px){.visual-five{grid-template-columns:repeat(5,76vw)}.visual-pick{min-width:76vw}.visual-pick img{height:180px}}
+
+/* 2.0.0 - experience-first home */
+.discover-head{display:flex;justify-content:space-between;gap:18px;align-items:end;margin:8px 0 18px}.discover-head h2{font-size:clamp(2rem,6vw,3.6rem);line-height:.98;margin:5px 0 10px;max-width:760px}.discover-head p{max-width:720px;color:var(--muted);font-size:1.04rem}.eyebrow2{font-size:.75rem;font-weight:900;letter-spacing:.13em;color:var(--accent)}
+.experience-entry-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.experience-entry{grid-column:span 6;min-height:260px;position:relative;border-radius:24px;overflow:hidden;text-decoration:none;color:#fff;box-shadow:var(--shadow);background:#17363b}.experience-entry.hero-entry{grid-column:span 12;min-height:390px}.experience-entry img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s}.experience-entry:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.78) 100%)}.experience-entry:hover img{transform:scale(1.025)}.experience-entry span{position:absolute;z-index:2;left:18px;right:18px;bottom:18px}.experience-entry b{display:block;font-size:1.35rem}.experience-entry small{display:block;margin-top:5px;font-size:.9rem;color:rgba(255,255,255,.88)}
+.collection-strip{margin:26px 0}.collection-strip h3{margin-bottom:10px}.collection-row{display:flex;gap:9px;overflow:auto;padding-bottom:4px}.collection-row a{white-space:nowrap;text-decoration:none;background:#fff;border:1px solid var(--line);padding:10px 13px;border-radius:999px;font-weight:800;color:var(--ink)}.trust-card{display:flex;justify-content:space-between;gap:18px;align-items:center;background:#edf6f4;border:1px solid #cfe2df;border-radius:20px;padding:17px 18px;margin:20px 0}.trust-card p{margin:5px 0 0;color:var(--muted)}.trust-card a{white-space:nowrap;font-weight:850;color:var(--accent)}
+@media(max-width:800px){.discover-head{display:block}.discover-head .btn{margin-top:8px}.experience-entry,.experience-entry.hero-entry{grid-column:1/-1;min-height:245px}.experience-entry.hero-entry{min-height:330px}.experience-entry b{font-size:1.25rem}.trust-card{display:block}.trust-card a{display:inline-block;margin-top:10px}}
 </style>
 <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" crossorigin=""/><link href="manifest.webmanifest" rel="manifest"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="default" name="apple-mobile-web-app-status-bar-style"/><meta content="Majorque" name="apple-mobile-web-app-title"/></head>
 <body>
@@ -128,35 +159,32 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <div class="eyebrow">Playbook familial - 5 au 13 août 2026</div>
 <h1>Majorque, sans subir Majorque.</h1>
 <p>Assistant local et offline-first depuis Peguera : agenda, territoires, météo et mer actualisées à l’ouverture, itinéraires et réservations en un geste.</p>
-<div class="toolbar">
-<a class="btn" href="#agenda" style="text-decoration:none">Voir l’agenda</a>
-<a class="navbtn" href="#trips">Itinéraires</a><a class="btn secondary" href="#spots" style="text-decoration:none">Explorer les lieux</a>
-<button class="btn secondary" onclick="window.print()">Imprimer / PDF</button>
-</div>
+<div class="toolbar"><a class="btn" href="#dashboard" style="text-decoration:none">Découvrir</a><a class="btn secondary" href="#now" style="text-decoration:none">Que fait-on ?</a><a class="btn secondary" href="#map" style="text-decoration:none">Explorer l’île</a></div>
 </div></div>
 <div class="app">
 <nav aria-label="Navigation principale" id="nav">
-<a class="navbtn active" href="#dashboard">Vue d’ensemble</a>
-<a class="navbtn" href="#now">Maintenant</a><a class="navbtn" href="#map">Explorer</a><a class="navbtn" href="#experiences">Expériences</a><a class="navbtn" href="#trips">Itinéraires</a><a class="navbtn" href="#events">Aujourd’hui</a><a class="navbtn" href="#agenda">Agenda</a><a class="navbtn" href="#pratique">Pratique</a><a class="navbtn" href="#secrets">Papa</a>
+<a class="navbtn active" href="#dashboard">✨ Découvrir</a>
+<a class="navbtn" href="#now">⚡ Kairos</a>
+<a class="navbtn" href="#map">🗺️ Explorer</a>
+<a class="navbtn" href="#agenda">❤️ Notre séjour</a>
+<a class="navbtn" href="#secrets">🔐 Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="section-title"><div><h2>Aujourd’hui</h2><p>L’essentiel immédiatement. Le détail reste dans les onglets dédiés.</p></div><span class="tag dark" id="appVersion">1.9.0 - top 5 visuels</span></div>
-<div class="grid dashboard-focus">
-<div class="card wide rec-card" id="todayRecommendation">
-<span class="rec-badge"><span class="status-dot" id="liveDot"></span>Actualisation à l’ouverture</span>
-<h3 style="margin-top:12px">Kairos du jour</h3>
-<p id="recommendationText">Connexion aux prévisions météo et marine de Peguera…</p>
-<div class="actions"><button class="btn small" id="refreshLive">Actualiser</button><button class="btn small secondary" id="weatherHere">Météo à ma position</button><a class="btn small secondary" href="https://www.windy.com/39.538/2.450" style="text-decoration:none" target="_blank">Windy</a></div><details class="notice location-help" id="locationHelp"><summary><strong>La localisation ne fonctionne pas ?</strong></summary><p>Sur iPhone : Réglages &gt; Confidentialité et sécurité &gt; Service de localisation &gt; Safari Websites (ou l’app Majorque) &gt; Lorsque l’app est active. Revenez ensuite ici et touchez de nouveau le bouton.</p><p>La position n’est demandée qu’au moment du clic et n’est pas enregistrée.</p></details>
+<div class="discover-head"><div><span class="eyebrow2">MAJORQUE · PLAYBOOK 2.0</span><h2>Qu’est-ce qui vous ferait kiffer ?</h2><p>Choisissez d’abord avec les yeux. Kairos vérifie ensuite trajet, météo, âge, disponibilité et contraintes réelles.</p></div><a class="btn" href="#now">⚡ Que fait-on aujourd’hui ?</a></div>
+<div class="experience-entry-grid">
+<a class="experience-entry hero-entry" href="#experiences"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-salmunia-img0.jpg" alt="Snorkeling à Majorque"><span><b>🤿 Explorer sous l’eau</b><small>Snorkeling · baptême de plongée · réserves marines</small></span></a>
+<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/articulo-mallorca-turismo-activo-img0.jpg" alt="Activités adrénaline à Majorque"><span><b>🤸 Se faire peur un peu</b><small>Coasteering · canyoning · escalade · grottes</small></span></a>
+<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-pi-img0.jpg" alt="Criques de Majorque"><span><b>🏝️ Trouver une crique incroyable</b><small>Eau turquoise · sauvage · baignade · snorkeling</small></span></a>
+<a class="experience-entry" href="#experiences"><img src="https://media.illesbalears.travel/articulo-mallorca-isla-de-cabrera--todo-lo-que-debes-saber-img3.jpg" alt="Sorties mer à Majorque"><span><b>⛵ Partir en mer</b><small>Bateau · kayak · Cabrera · sunset</small></span></a>
+<a class="experience-entry" href="#trips"><img src="https://media.illesbalears.travel/articulo-mallorca-serra-de-tramuntana-img0.jpg" alt="Serra de Tramuntana"><span><b>⛰️ Majorque sauvage</b><small>Tramuntana · routes panoramiques · randonnées</small></span></a>
+<a class="experience-entry" href="#territoires"><img src="https://media.illesbalears.travel/rrtt-mallorca-pueblo-valldemossa-img0.jpg" alt="Villages de Majorque"><span><b>🏘️ Explorer & comprendre</b><small>Villages · Palma · patrimoine · marchés</small></span></a>
 </div>
-<div class="card" id="liveWeatherCard"><h3>Conditions</h3><div class="live-grid"><div class="live-metric"><span class="live-label">Air</span><b id="liveTemp">--</b></div><div class="live-metric"><span class="live-label">Vent</span><b id="liveWind">--</b></div><div class="live-metric"><span class="live-label">Rafales</span><b id="liveGust">--</b></div><div class="live-metric"><span class="live-label">Pluie</span><b id="liveRain">--</b></div></div><p class="muted" id="weatherUpdated">En attente de connexion.</p></div>
-<div class="card" id="liveMarineCard"><h3>Mer</h3><div class="live-grid"><div class="live-metric"><span class="live-label">Vagues</span><b id="liveWave">--</b></div><div class="live-metric"><span class="live-label">Période</span><b id="livePeriod">--</b></div><div class="live-metric"><span class="live-label">Eau</span><b id="liveSeaTemp">--</b></div><div class="live-metric"><span class="live-label">Lecture</span><b id="liveSeaRead">--</b></div></div><p class="muted">Indicateur de confort, jamais un feu vert de sécurité.</p></div>
-<div class="card full" id="todayEventsCard"><div class="section-title" style="margin-bottom:8px"><div><h3 style="margin:0">Activités du jour</h3><p id="todayEventsStamp">Calcul selon l’heure locale…</p></div><span class="tag" id="todayEventsCount">0 événement</span></div><div class="grid" id="todayEventsPreview"></div><div class="actions"><a class="btn small secondary" href="#events" style="text-decoration:none">Voir tous les événements</a></div></div>
-<div class="card full home-actions"><h3>Accès rapides</h3><div class="home-action-grid"><a href="#now"><strong>Que faire maintenant ?</strong><small>3 options selon heure et météo</small></a><a href="#map"><strong>Carte</strong><small>Repérer les lieux autour de vous</small></a><a href="#experiences"><strong>Expériences</strong><small>Choisir selon l’envie, le temps et l’énergie</small></a><a href="#events"><strong>Activités du jour</strong><small>Marchés et événements datés</small></a><a href="#agenda"><strong>Agenda</strong><small>Voir le déroulé du séjour</small></a><a href="#territoires"><strong>Villes &amp; villages</strong><small>Must see et must do</small></a><a href="#restaurants"><strong>Adresses</strong><small>Appeler, réserver, itinéraire</small></a><a href="#secrets"><strong>Papa</strong><small>Journées signature</small></a></div></div>
-</div>
+<div class="collection-strip"><h3>Collections pour choisir vite</h3><div class="collection-row"><a href="#experiences">🔥 Must do</a><a href="#experiences">👀 Les enfants vont adorer</a><a href="#map">📍 À proximité</a><a href="#trips">🚗 Ça vaut le trajet</a><a href="#events">🌅 Pour aujourd’hui</a><a href="#restaurants">🍴 Bien manger</a></div></div>
+<div class="trust-card"><div><b>Base sourcée, recommandation contextualisée</b><p>Les faits viennent des sources officielles, institutionnelles ou opérateurs vérifiés. Les classements restent éditoriaux Kairos. Une disponibilité du jour n’est jamais supposée.</p></div><a href="#experiences">Voir le corpus →</a></div>
 <div class="update-banner" hidden="" id="updateBanner"><strong>Nouvelle version disponible.</strong><button class="btn small" id="applyUpdate">Mettre à jour maintenant</button></div>
 </section>
 <section class="app-panel" id="now">
-<div class="section-title"><div><h2>Que faire maintenant ?</h2><p>Une recommandation courte, calculée selon l’heure, la météo, le temps disponible et votre point de départ.</p></div></div>
+<div class="section-title"><div><h2>Kairos · que fait-on ?</h2><p>Une recommandation courte, calculée selon l’heure, la météo, le temps disponible et votre point de départ.</p></div></div>
 
 <div class="topcats" id="tops"><h3>🏆 Top 5 visuels par envie</h3><p class="muted">Pour choisir en famille d'abord avec les yeux, puis avec les contraintes réelles. Classements Kairos : expérience + singularité + intérêt familial, pas simple popularité Instagram.</p>
 <div class="topcat-nav"><a href="#top-beaches">🏖️ Plages</a><a href="#top-adrenaline">🤸 Adrénaline</a><a href="#top-family">👨‍👩‍👧‍👦 Famille</a><a href="#top-nature">🌿 Nature</a><a href="#top-culture">🏛️ Découverte</a><a href="#top-sea">🌊 Mer</a></div>
@@ -235,12 +263,12 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <div class="grid" id="eventsGrid"></div>
 </section><section class="app-panel" id="map">
 <div class="section-title"><div><h2>Explorer l’île</h2><p>Une vraie carte pour découvrir lieux, activités et opportunités autour de vous. Touchez un point pour décider.</p></div><span class="tag dark">Carte en ligne · données Kairos locales</span></div>
-<div class="explore-toolbar"><button class="btn small active" data-map-filter="all">Tout</button><button class="btn small secondary" data-map-filter="Plage">Plages</button><button class="btn small secondary" data-map-filter="adrenaline">Adrénaline</button><button class="btn small secondary" data-map-filter="sea">Mer</button><button class="btn small secondary" data-map-filter="nature">Nature</button><button class="btn small secondary" data-map-filter="culture">Culture</button><button class="btn small secondary" data-map-filter="family">Famille</button><button class="btn small secondary" data-map-filter="food">Gourmand</button><button class="btn small secondary" data-map-filter="event">Événements</button></div>
+<div class="explore-toolbar"><button class="btn small active" data-map-filter="all">▦ Tout</button><button class="btn small secondary" data-map-filter="Plage">🏖 Plages</button><button class="btn small secondary" data-map-filter="adrenaline">🤸 Adrénaline</button><button class="btn small secondary" data-map-filter="sea">🌊 Mer</button><button class="btn small secondary" data-map-filter="nature">🌿 Nature</button><button class="btn small secondary" data-map-filter="culture">🏛 Culture</button><button class="btn small secondary" data-map-filter="family">👨‍👩‍👧 Famille</button><button class="btn small secondary" data-map-filter="food">🍴 Gourmand</button><button class="btn small secondary" data-map-filter="event">📅 Événements</button></div>
 <div class="explore-actions"><button class="btn secondary" id="mapLocate" type="button">◎ Autour de moi</button><button class="btn secondary" id="mapFit" type="button">Voir toute l’île</button><span class="muted" id="mapCount"></span></div>
 <div class="real-map-layout"><div id="realMap" aria-label="Carte interactive de Majorque"></div><aside class="card map-detail" id="mapDetail"><span class="tag">Explorer</span><h3>Choisissez un point</h3><p>Les lieux et expériences vérifiés apparaissent sur la carte. Les activités génériques sont positionnées dans leur zone de pratique indicative, jamais comme une adresse d’opérateur.</p></aside></div>
 <details class="notice" style="margin-top:12px"><summary><strong>Hors connexion ?</strong></summary><p>Le fond OpenStreetMap nécessite une connexion lors du premier affichage. Les données Kairos restent dans la PWA et les fiches Lieux / Expériences restent accessibles.</p></details>
 </section><section class="app-panel" id="agenda">
-<div class="section-title"><div><h2>Agenda du séjour</h2><p>Les 10 et 11 sont volontairement verrouillés.</p></div></div>
+<div class="section-title"><div><h2>Notre séjour</h2><p>Les 10 et 11 sont volontairement verrouillés.</p></div></div>
 <div class="grid" id="agendaGrid"><article class="card wide day"><div class="day-content"><div class="day-date">Mercredi 5 août</div><h3>Arrivée et prise de repères</h3><span class="tag">Décompression</span><div class="timeline"><div class="slot"><div class="time">Arrivée</div><div>Aéroport de Palma puis taxi vers Peguera.</div></div><div class="slot"><div class="time">Fin de journée</div><div>Installation, Playa Palmira et promenade.</div></div><div class="slot"><div class="time">Soir</div><div>Dîner à l’hôtel. Option courte : Sunset Market de Puerto Portals uniquement si l’énergie suit.</div></div></div></div></article>
 <article class="card wide day"><div class="day-content"><div class="day-date">Jeudi 6 août</div><h3>Peguera à pied</h3><span class="tag">Zéro logistique</span><div class="timeline"><div class="slot"><div class="time">Matin</div><div>Playa Palmira puis Tora et La Romana.</div></div><div class="slot"><div class="time">Après-midi</div><div>Balade jusqu’à Cala Fornells, snorkeling et retour tranquille.</div></div><div class="slot"><div class="time">Soir</div><div>Dîner à l’hôtel et promenade.</div></div></div></div></article>
 <article class="card day"><div class="day-content"><div class="day-date">Vendredi 7 août</div><h3>Camp de Mar</h3><span class="tag">Plage proche et respirable</span><div class="timeline"><div class="slot"><div class="time">Matin</div><div>Départ tôt à pied ou en taxi.</div></div><div class="slot"><div class="time">Journée</div><div>Baignade, paddle, déjeuner léger, passerelle d’Illeta.</div></div><div class="slot"><div class="time">Retour</div><div>Taxi si fatigue, dîner à l’hôtel.</div></div></div></div></article>
@@ -471,6 +499,7 @@ function activatePanel(hash, scroll=true){
  const target=$(id)||$('dashboard');
  $$('.app-panel').forEach(sec=>sec.classList.toggle('active-panel',sec===target));
  $$('.navbtn').forEach(x=>x.classList.toggle('active',x.getAttribute('href')==='#'+target.id));
+ if(target.id==='map'){requestAnimationFrame(()=>{buildMap();requestAnimationFrame(()=>leafletMap?.invalidateSize(true));setTimeout(()=>leafletMap?.invalidateSize(true),220);});}
  if(scroll) window.scrollTo({top:0,behavior:'instant'});
 }
 function setupNavigation(){
@@ -660,15 +689,17 @@ function mapItems(){
 }
 function mapMatches(i){return mapFilter==='all'||i.cat===mapFilter||(mapFilter==='event'&&i.kind==='event');}
 function mapDetailHtml(i){const type=i.kind==='xp'?(XP_LABEL[i.cat]||'Expérience'):(i.cat||'Lieu');return `<span class="tag">${type}</span><span class="tag dark">${i.score||'—'}/100</span><h3>${i.title}</h3><p>${i.desc}</p>${i.caution?`<div class="guide-tip"><strong>À vérifier : </strong>${i.caution}</div>`:''}<div class="actions"><a class="link" href="${i.route}" target="_blank" rel="noopener">${i.kind==='xp'?'Voir les options':'Itinéraire'}</a>${i.source?`<a class="link alt" href="${i.source}" target="_blank" rel="noopener">Source</a>`:''}</div>`;}
-function renderMapMarkers(){if(!leafletMap||!mapLayerGroup)return;mapLayerGroup.clearLayers();const items=mapItems().filter(mapMatches);items.forEach(i=>{const marker=L.circleMarker([i.lat,i.lon],{radius:i.kind==='xp'?8:7,weight:2,fillOpacity:.9});marker.bindTooltip(i.title);marker.on('click',()=>{$('mapDetail').innerHTML=mapDetailHtml(i);});marker.addTo(mapLayerGroup);});if($('mapCount'))$('mapCount').textContent=`${items.length} points visibles`;}
+const MAP_COLORS={Plage:'#087f9f',Ville:'#bd513b',Village:'#5b8d3a',Port:'#7350a3',Expérience:'#e18a24',adrenaline:'#d94d2f',sea:'#176ca8',nature:'#4c8d2e',culture:'#7350a3',family:'#e77a19',food:'#a96a17',event:'#d84b72'};
+function mapColor(i){return MAP_COLORS[i.cat]||MAP_COLORS[i.kind==='xp'?'Expérience':'Ville'];}
+function renderMapMarkers(){if(!leafletMap||!mapLayerGroup)return;mapLayerGroup.clearLayers();const items=mapItems().filter(mapMatches);items.forEach(i=>{const c=mapColor(i);const marker=L.circleMarker([i.lat,i.lon],{radius:i.kind==='xp'?9:8,weight:2,color:'#fff',fillColor:c,fillOpacity:.96});marker.bindTooltip(i.title,{direction:'top',offset:[0,-5]});marker.on('click',()=>{$('mapDetail').innerHTML=mapDetailHtml(i);});marker.addTo(mapLayerGroup);});if($('mapCount'))$('mapCount').textContent=`${items.length} points visibles`;}
 function buildMap(){
  const el=$('realMap'); if(!el||typeof L==='undefined')return;
- if(!leafletMap){leafletMap=L.map(el,{zoomControl:true}).setView([39.64,2.82],9);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(leafletMap);mapLayerGroup=L.layerGroup().addTo(leafletMap);}
- renderMapMarkers();setTimeout(()=>leafletMap.invalidateSize(),100);
+ if(!leafletMap){leafletMap=L.map(el,{zoomControl:true,preferCanvas:true}).setView([39.64,2.95],9);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',updateWhenIdle:false,keepBuffer:4}).addTo(leafletMap);mapLayerGroup=L.layerGroup().addTo(leafletMap);}
+ renderMapMarkers();requestAnimationFrame(()=>leafletMap.invalidateSize(true));setTimeout(()=>leafletMap.invalidateSize(true),180);
 }
 function setupExploreMap(){
  $$('[data-map-filter]').forEach(b=>b.addEventListener('click',()=>{mapFilter=b.dataset.mapFilter;$$('[data-map-filter]').forEach(x=>{x.classList.toggle('active',x===b);x.classList.toggle('secondary',x!==b)});buildMap();}));
- $('mapFit')?.addEventListener('click',()=>{buildMap();leafletMap?.fitBounds([[39.25,2.28],[39.95,3.48]],{padding:[20,20]});});
+ $('mapFit')?.addEventListener('click',()=>{buildMap();leafletMap?.invalidateSize(true);leafletMap?.fitBounds([[39.22,2.28],[40.08,3.50]],{padding:[24,24]});});
  $('mapLocate')?.addEventListener('click',()=>requestPosition(p=>{buildMap();const ll=[p.coords.latitude,p.coords.longitude];if(mapUserMarker)mapUserMarker.remove();mapUserMarker=L.marker(ll).addTo(leafletMap).bindPopup('Vous êtes ici').openPopup();leafletMap.setView(ll,12);},e=>toast(geolocationMessage(e),3500)));
 }
 const PAPA_CONFIG={
@@ -748,7 +779,7 @@ function runDiagnostics(){
  return tests;
 }
 function setupDiagnostics(){$('runDiagnostics')?.addEventListener('click',()=>{runDiagnostics();toast('Contrôle terminé');});setTimeout(runDiagnostics,500);}
-function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=1.8.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
+function setupServiceWorker(){if(!('serviceWorker' in navigator)||!location.protocol.startsWith('http'))return;window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./sw.js?version=2.0.0');await reg.update();const banner=$('updateBanner'),show=()=>{if(reg.waiting&&banner)banner.hidden=false;};show();reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)show();});});$('applyUpdate')?.addEventListener('click',()=>reg.waiting?.postMessage({type:'SKIP_WAITING'}));navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload());}catch(e){console.warn('SW',e);}});}
 function validateExternalLinks(){$$('a[href^="http"]').forEach(a=>{a.target='_blank';a.rel='noopener noreferrer';});}
 
 
