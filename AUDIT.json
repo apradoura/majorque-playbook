@@ -1,11 +1,17 @@
 {
-  "version": "1.7.0",
+  "version": "1.9.0",
+  "status": "source-audited",
+  "verified_at": "2026-08-07",
   "checks": [
-    "package complete",
-    "mobility panel removed",
-    "leaflet explorer present",
-    "experience coordinates present",
-    "cliff jump catalog present",
-    "Papa hash retained"
-  ]
+    "javascript syntax",
+    "duplicate ids",
+    "internal anchors",
+    "PWA package complete",
+    "snorkeling source links",
+    "experience catalogue source links",
+    "diving category and junior caution",
+    "markets and gastronomy official source coverage"
+  ],
+  "source_policy": "Official/institutional sources first. Kairos rankings are editorial and are not presented as official rankings.",
+  "notes": "Dynamic availability, operator slots, sea state, prices and age/medical acceptance must be reconfirmed with the operator before departure."
 }

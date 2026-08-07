@@ -1,3 +1,3 @@
-# Kairos Travel Majorque 1.7.0
+# Kairos Travel - Majorque
 
-PWA familiale Majorque. Explorer utilise Leaflet/OpenStreetMap en ligne et superpose les données Kairos locales.
+Version 1.8.0. PWA familiale Majorque avec moteur de recommandation, Explorer, expériences, événements, itinéraires, mode Papa et Top 5 snorkeling documenté avec photos et sources officielles.
