@@ -1,15 +1,11 @@
 {
-  "version": "1.6.0-complete",
-  "ids": 96,
-  "duplicate_ids": [],
-  "anchors_total": 24,
-  "broken_anchors": [],
-  "links_total": 197,
-  "empty_links": [],
-  "buttons": 40,
-  "manifest_linked": true,
-  "service_worker_registered": true,
-  "experiences_catalog": true,
-  "events_catalog": true,
-  "papa_code_1512": true
+  "version": "1.7.0",
+  "checks": [
+    "package complete",
+    "mobility panel removed",
+    "leaflet explorer present",
+    "experience coordinates present",
+    "cliff jump catalog present",
+    "Papa hash retained"
+  ]
 }
