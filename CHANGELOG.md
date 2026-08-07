@@ -1,3 +1,13 @@
+
+# 2.0.4 — cartes Top 5 réellement actionnables
+
+- Toutes les 30 cartes visuelles des Top 5 sont maintenant cliquables au niveau de la carte entière.
+- Lieux déjà documentés : ouverture directe de la fiche filtrée dans Lieux.
+- Expériences : ouverture directe de la bonne expérience dans le catalogue (coasteering, canyoning, escalade/DWS, grottes, kayak, train de Sóller, Drach, Cabrera, etc.).
+- Lieux sans fiche détaillée : ouverture d’une recherche Maps explicite plutôt qu’un clic sans effet.
+- Ajout de l’expérience Escalade / DWS au corpus actionnable.
+- Navigation clavier Enter/Espace ajoutée aux cartes.
+- Papa et moteur de contraintes conservés.
 # Changelog
 
 ## 2.0.3 — Navigation profonde fiabilisée
