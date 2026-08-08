@@ -1,11 +1,14 @@
-const CACHE = 'kairos-majorque-2.0.4';
+const CACHE = 'kairos-majorque-2.1.0';
 const CORE = [
   './',
   './index.html',
   './manifest.webmanifest',
   './VERSION',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './data/corpus.json',
+  './data/collections.json',
+  './data/source_policy.json'
 ];
 
 self.addEventListener('install', event => {

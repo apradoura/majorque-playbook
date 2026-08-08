@@ -1,0 +1,1070 @@
+{
+  "version": "2.1.0",
+  "verified_at": "2026-08-08",
+  "count": 44,
+  "entities": [
+    {
+      "id": "cala-comtessa",
+      "name": "Cala Comtessa",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "family",
+        "sea"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-comptessa",
+      "verified_at": "2026-08-08",
+      "why": "Snorkeling officiellement recommandé, roche et posidonie, bon compromis mer/confort.",
+      "constraints": [
+        "petite plage",
+        "fréquentation estivale à contextualiser"
+      ],
+      "services": [
+        "restaurants",
+        "douches",
+        "kayak/SUP"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "portals-vells",
+      "name": "Portals Vells",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "nature",
+        "sea"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/cove-portals-vells-iii",
+      "verified_at": "2026-08-08",
+      "why": "Plusieurs petites criques, eau claire et intérêt snorkeling/plongée dans le sud-ouest.",
+      "constraints": [
+        "fréquentation estivale"
+      ],
+      "services": [
+        "restauration à proximité"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-sa-nau",
+      "name": "Cala Sa Nau",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "family",
+        "sea"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/cove-sa-nau",
+      "verified_at": "2026-08-08",
+      "why": "Eau transparente, sable+roche+posidonie, snorkeling recommandé et services utiles.",
+      "constraints": [
+        "parking à distance selon période"
+      ],
+      "services": [
+        "chiringuito",
+        "douche",
+        "sauveteur",
+        "kayak/SUP"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-anguila",
+      "name": "Cala Anguila",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "family"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-anguila",
+      "verified_at": "2026-08-08",
+      "why": "Faible profondeur et vie sous-marine intéressante le long des parois rocheuses.",
+      "constraints": [
+        "long trajet depuis Paguera"
+      ],
+      "services": [
+        "sauveteur"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "mondrago",
+      "name": "Parc naturel de Mondragó",
+      "kind": "place",
+      "tags": [
+        "nature",
+        "beach",
+        "walking",
+        "family"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://illesbalears.travel/es/mallorca/parque-natural-mondrago",
+      "verified_at": "2026-08-08",
+      "why": "Expérience composite : parc naturel, criques protégées et itinéraires courts.",
+      "constraints": [
+        "affluence en été"
+      ],
+      "services": [
+        "sentiers",
+        "plages"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "calo-des-burgit",
+      "name": "Caló des Burgit",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "nature"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/index.php/es/mallorca/cala-calo-des-burgit",
+      "verified_at": "2026-08-08",
+      "why": "Petite crique du parc de Mondragó, intérêt snorkeling documenté.",
+      "constraints": [
+        "accès à pied"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-mendia",
+      "name": "Cala Mendia",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family",
+        "comfort"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/index.php/en/mallorca/cove-mendia",
+      "verified_at": "2026-08-08",
+      "why": "Eau calme et peu profonde, bon format famille et combinaison avec Cala Anguila.",
+      "constraints": [
+        "long trajet depuis Paguera"
+      ],
+      "services": [
+        "restaurants",
+        "sauveteur",
+        "parking"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-llombards",
+      "name": "Cala Llombards",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-llombards",
+      "verified_at": "2026-08-08",
+      "why": "Belle crique turquoise, accès relativement simple et services.",
+      "constraints": [
+        "forte affluence estivale"
+      ],
+      "services": [
+        "parking proche",
+        "services"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": "Ne pas labelliser Top snorkeling sans preuve spécifique."
+    },
+    {
+      "id": "cala-fornells",
+      "name": "Cala Fornells",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "nearby",
+        "family",
+        "sea"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-fornells",
+      "verified_at": "2026-08-08",
+      "why": "Très proche de Paguera, eau claire et bon format court.",
+      "constraints": [
+        "environnement construit"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-ferrera",
+      "name": "Cala Ferrera",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family",
+        "comfort"
+      ],
+      "must_status": "contextual",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-ferrera",
+      "verified_at": "2026-08-08",
+      "why": "Plage bien équipée, eau peu profonde, adaptée à une journée facile.",
+      "constraints": [
+        "long trajet depuis Paguera"
+      ],
+      "services": [
+        "sauveteur",
+        "restaurants",
+        "kayak/SUP"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-vinyes",
+      "name": "Cala Vinyes",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family",
+        "comfort"
+      ],
+      "must_status": "contextual",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-vinyes",
+      "verified_at": "2026-08-08",
+      "why": "Baignade facile et services dans le sud-ouest.",
+      "constraints": [
+        "urbanisée",
+        "fréquentée en été"
+      ],
+      "services": [
+        "services"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "illetes",
+      "name": "Playa de Illetes",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "family",
+        "comfort"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/beach-illetes",
+      "verified_at": "2026-08-08",
+      "why": "Secteur de petites plages, eau claire, restauration et snorkeling familial.",
+      "constraints": [
+        "fréquentation estivale",
+        "stationnement"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-mitjana",
+      "name": "Cala Mitjana",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "wild"
+      ],
+      "must_status": "caution",
+      "confidence": "official_primary",
+      "source": "https://illesbalears.travel/es/mallorca/cala-mitjana",
+      "verified_at": "2026-08-08",
+      "why": "Très belle crique sauvage, mais accès terrestre exigeant.",
+      "constraints": [
+        "accès rocheux potentiellement dangereux",
+        "accès alternatif via propriété privée restreinte"
+      ],
+      "services": [],
+      "family_fit": "low",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "camp-de-mar",
+      "name": "Camp de Mar",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family",
+        "comfort",
+        "sea"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/beach-camp-de-mar",
+      "verified_at": "2026-08-08",
+      "why": "Plage confortable du sud-ouest avec activités nautiques et services.",
+      "constraints": [
+        "zone à préserver avant le baptême de plongée du 10 août dans le contexte actuel"
+      ],
+      "services": [
+        "restaurants",
+        "activités nautiques"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-figuera",
+      "name": "Cala Figuera",
+      "kind": "place",
+      "tags": [
+        "village",
+        "harbour",
+        "culture",
+        "photo"
+      ],
+      "must_status": "strong",
+      "confidence": "official_local",
+      "source": "https://www.visitcalafiguera.com/",
+      "verified_at": "2026-08-08",
+      "why": "Port naturel de pêche remarquable ; à classer en découverte, pas en plage.",
+      "constraints": [],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-santanyi",
+      "name": "Cala Santanyí",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "family",
+        "comfort"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-santanyi",
+      "verified_at": "2026-08-08",
+      "why": "Fonds rocheux documentés pour snorkeling et très bon niveau de services.",
+      "constraints": [
+        "trajet depuis Paguera"
+      ],
+      "services": [
+        "restaurants",
+        "bars",
+        "douches",
+        "sauveteur"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-salmunia",
+      "name": "Cala s’Almunia",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "snorkeling",
+        "wild"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/cove-salmunia",
+      "verified_at": "2026-08-08",
+      "why": "Fonds rocheux + posidonie explicitement décrits comme idéaux pour le snorkeling.",
+      "constraints": [
+        "escalier raide",
+        "rochers glissants",
+        "aucun service"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-pi",
+      "name": "Cala Pi",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "landscape"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/index.php/en/mallorca/cove-pi",
+      "verified_at": "2026-08-08",
+      "why": "Crique encaissée spectaculaire, forte valeur paysage.",
+      "constraints": [
+        "affluence possible",
+        "escaliers"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "ses-covetes",
+      "name": "Ses Covetes / Es Trenc",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "family",
+        "landscape"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/beach-ses-covetes",
+      "verified_at": "2026-08-08",
+      "why": "Grande expérience sable blanc/eau peu profonde, différente des criques rocheuses.",
+      "constraints": [
+        "long trajet",
+        "chaleur",
+        "affluence"
+      ],
+      "services": [
+        "services selon secteur"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "illa-del-toro",
+      "name": "Réserve marine Illa del Toro",
+      "kind": "place",
+      "tags": [
+        "snorkeling",
+        "diving",
+        "marine-reserve"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/marine-reserve-illa-del-toro",
+      "verified_at": "2026-08-08",
+      "why": "Réserve marine riche, excellent candidat biodiversité pour snorkeling/plongée.",
+      "constraints": [
+        "respect strict des zones protégées",
+        "accès snorkeling à confirmer selon point de mise à l’eau"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cabrera",
+      "name": "Parc national de Cabrera",
+      "kind": "place",
+      "tags": [
+        "snorkeling",
+        "boat",
+        "nature",
+        "marine-reserve"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/the-cabrera-archipelago-maritime-terrestrial-national-park",
+      "verified_at": "2026-08-08",
+      "why": "Expérience marine et nature signature, forte biodiversité et snorkeling.",
+      "constraints": [
+        "journée bateau",
+        "réservation/autorisation selon prestation"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "llevant-marine",
+      "name": "Réserve marine du Llevant",
+      "kind": "place",
+      "tags": [
+        "snorkeling",
+        "diving",
+        "marine-reserve"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/marine-reserve-llevant-de-mallorca",
+      "verified_at": "2026-08-08",
+      "why": "Très riche biodiversité marine, mais loin de Paguera.",
+      "constraints": [
+        "long trajet"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "cala-tuent",
+      "name": "Cala Tuent",
+      "kind": "place",
+      "tags": [
+        "beach",
+        "nature",
+        "tramuntana",
+        "wild"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/cala-tuent",
+      "verified_at": "2026-08-08",
+      "why": "Crique sauvage de Tramuntana, à combiner avec une journée montagne.",
+      "constraints": [
+        "route longue et sinueuse"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "sa-calobra",
+      "name": "Sa Calobra / Torrent de Pareis",
+      "kind": "place",
+      "tags": [
+        "nature",
+        "tramuntana",
+        "landscape"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/cove-sa-calobra",
+      "verified_at": "2026-08-08",
+      "why": "Site spectaculaire de Tramuntana, valeur intrinsèque très forte.",
+      "constraints": [
+        "route exigeante",
+        "journée dédiée",
+        "affluence"
+      ],
+      "services": [
+        "restauration selon saison"
+      ],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "valldemossa",
+      "name": "Valldemossa",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "tramuntana"
+      ],
+      "must_status": "must",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Village incontournable de Tramuntana, excellent rendement émotion/trajet.",
+      "constraints": [
+        "affluence en journée"
+      ],
+      "services": [
+        "cafés",
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "deia",
+      "name": "Deià",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "tramuntana",
+        "photo"
+      ],
+      "must_status": "must",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Village emblématique de Tramuntana, à combiner plutôt qu’isoler.",
+      "constraints": [
+        "stationnement",
+        "affluence"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "soller",
+      "name": "Sóller / Port de Sóller",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "tramuntana",
+        "train"
+      ],
+      "must_status": "must",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Village, port et train historique composent une expérience majeure.",
+      "constraints": [
+        "trafic et stationnement"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "fornalutx",
+      "name": "Fornalutx",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "tramuntana"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Petit village très fort visuellement, excellent complément à Sóller.",
+      "constraints": [],
+      "services": [
+        "cafés"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "pollenca",
+      "name": "Pollença",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "north"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Vieille ville et Calvari, pertinent dans une journée nord.",
+      "constraints": [
+        "long trajet depuis Paguera"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "alcudia",
+      "name": "Alcúdia",
+      "kind": "place",
+      "tags": [
+        "village",
+        "culture",
+        "north"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Vieille ville fortifiée et remparts, à combiner avec le nord.",
+      "constraints": [
+        "long trajet depuis Paguera"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "banyalbufar",
+      "name": "Banyalbufar",
+      "kind": "place",
+      "tags": [
+        "village",
+        "tramuntana",
+        "landscape"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Terrasses et côte ouest, très cohérent dans une route Tramuntana ouest.",
+      "constraints": [
+        "route sinueuse"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "estellencs",
+      "name": "Estellencs",
+      "kind": "place",
+      "tags": [
+        "village",
+        "tramuntana",
+        "landscape"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/es/mallorca/los-pueblos-de-mallorca-que-debes-visitar",
+      "verified_at": "2026-08-08",
+      "why": "Petit village ouest, bon candidat pour une journée proche du sud-ouest.",
+      "constraints": [
+        "route sinueuse"
+      ],
+      "services": [
+        "restaurants"
+      ],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-scuba",
+      "name": "Baptême de plongée / plongée",
+      "kind": "experience",
+      "tags": [
+        "diving",
+        "sea",
+        "family"
+      ],
+      "must_status": "must",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/en/mallorca/diving-in-mallorca",
+      "verified_at": "2026-08-08",
+      "why": "Véritable expérience signature ; baptême à construire avec opérateur, âge, profondeur et conditions du jour.",
+      "constraints": [
+        "réservation",
+        "questionnaire médical",
+        "conditions junior",
+        "météo marine"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": "Pour le 10 août, Camp de Mar est le scénario actuellement privilégié."
+    },
+    {
+      "id": "xp-coasteering",
+      "name": "Coasteering",
+      "kind": "experience",
+      "tags": [
+        "adrenaline",
+        "cliff-jump",
+        "sea"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://illesbalears.travel/en/mallorca/have-you-heard-of-coasteering-try-out-this-new-trend-in-majorca",
+      "verified_at": "2026-08-08",
+      "why": "Combine nage, sauts, escalade et exploration côtière ; format privilégié pour les sauts encadrés.",
+      "constraints": [
+        "guide indispensable",
+        "âge/niveau à confirmer",
+        "état de mer"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-canyoning",
+      "name": "Canyoning",
+      "kind": "experience",
+      "tags": [
+        "adrenaline",
+        "nature",
+        "tramuntana"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://illesbalears.travel/en/mallorca/enjoy-canyoning",
+      "verified_at": "2026-08-08",
+      "why": "Activité de montagne reconnue, différenciante pour une journée adrénaline.",
+      "constraints": [
+        "guide",
+        "niveau",
+        "chaleur",
+        "conditions torrent"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-caving",
+      "name": "Grottes marines / spéléologie",
+      "kind": "experience",
+      "tags": [
+        "adrenaline",
+        "caving",
+        "sea"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/canyoning-in-majorcas-sea-caves",
+      "verified_at": "2026-08-08",
+      "why": "Exploration souterraine encadrée, très différenciante.",
+      "constraints": [
+        "guide indispensable",
+        "nage/rappel selon sortie"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-climbing",
+      "name": "Escalade / DWS",
+      "kind": "experience",
+      "tags": [
+        "adrenaline",
+        "climbing"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/en/mallorca/what-to-do/deportes-y-turismo/turismo-activo",
+      "verified_at": "2026-08-08",
+      "why": "Majorque est une destination reconnue pour escalade et deep-water soloing.",
+      "constraints": [
+        "guide recommandé pour première expérience",
+        "niveau",
+        "sécurité DWS"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-kayak",
+      "name": "Kayak de mer / grottes",
+      "kind": "experience",
+      "tags": [
+        "sea",
+        "family",
+        "adventure"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/en/mallorca/what-to-do/deportes-y-turismo/turismo-activo",
+      "verified_at": "2026-08-08",
+      "why": "Très bon format pour explorer la côte et les grottes sans gros effort logistique.",
+      "constraints": [
+        "vent/houle",
+        "opérateur selon parcours"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-sup",
+      "name": "Paddle / SUP",
+      "kind": "experience",
+      "tags": [
+        "sea",
+        "family"
+      ],
+      "must_status": "contextual",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/en/mallorca/what-to-do/deportes-y-turismo/turismo-activo",
+      "verified_at": "2026-08-08",
+      "why": "Format court et flexible, particulièrement adapté aux baies calmes.",
+      "constraints": [
+        "vent/houle"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-train-soller",
+      "name": "Train historique de Sóller",
+      "kind": "experience",
+      "tags": [
+        "family",
+        "culture",
+        "train"
+      ],
+      "must_status": "must",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/index.php/es/mallorca/municipios/soller",
+      "verified_at": "2026-08-08",
+      "why": "Expérience iconique familiale et patrimoniale, pas seulement un transport.",
+      "constraints": [
+        "horaires et billets à vérifier"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-drach",
+      "name": "Grottes du Drach",
+      "kind": "experience",
+      "tags": [
+        "family",
+        "cave",
+        "culture"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://www.illesbalears.travel/en/mallorca/family-and-fun-in-mallorca",
+      "verified_at": "2026-08-08",
+      "why": "Grande expérience couverte, utile aussi en journée de forte chaleur.",
+      "constraints": [
+        "long trajet depuis Paguera",
+        "créneau billet"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-family-parks",
+      "name": "Loisirs famille",
+      "kind": "experience",
+      "tags": [
+        "family",
+        "leisure"
+      ],
+      "must_status": "contextual",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/en/mallorca/family-and-fun-in-mallorca",
+      "verified_at": "2026-08-08",
+      "why": "Palma Aquarium, Jungle Park, Forestal Park, Katmandu et autres alternatives famille.",
+      "constraints": [
+        "choisir selon âge/chaleur/horaires"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-markets",
+      "name": "Marchés, artisanat et fêtes",
+      "kind": "experience",
+      "tags": [
+        "culture",
+        "events",
+        "food"
+      ],
+      "must_status": "strong",
+      "confidence": "official_category",
+      "source": "https://illesbalears.travel/en/mallorca/what-to-do/gastronomia/mercados-y-ferias",
+      "verified_at": "2026-08-08",
+      "why": "Permet d’ajouter la Majorque locale aux journées balnéaires.",
+      "constraints": [
+        "jours et horaires variables",
+        "agenda daté nécessaire"
+      ],
+      "services": [],
+      "family_fit": "high",
+      "location": null,
+      "notes": ""
+    },
+    {
+      "id": "xp-wine-oil",
+      "name": "Œnotourisme & oléotourisme",
+      "kind": "experience",
+      "tags": [
+        "food",
+        "culture"
+      ],
+      "must_status": "strong",
+      "confidence": "official_primary",
+      "source": "https://www.illesbalears.travel/es/mallorca/que-hacer/gastronomia/enoturismo-y-oleoturismo",
+      "verified_at": "2026-08-08",
+      "why": "Expériences gastronomiques structurées autour du vin et de l’huile.",
+      "constraints": [
+        "réservation fréquente",
+        "conducteur responsable"
+      ],
+      "services": [],
+      "family_fit": "medium",
+      "location": null,
+      "notes": ""
+    }
+  ]
+}

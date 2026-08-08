@@ -1,43 +1,17 @@
 {
-  "version": "2.0.4",
-  "papa": {
-    "preserved": true,
-    "code_hash": "66c03337b22c301d55a339a94165dc09628491c3dfe01a57ef62e3eab452e898",
-    "auto_lock_minutes": 15
-  },
-  "navigation": [
-    "dashboard",
-    "now",
-    "map",
-    "agenda",
-    "secrets"
-  ],
-  "legacy_panels_preserved": true,
-  "experience_first_home": true,
-  "source_policy": "facts sourced; Kairos rankings editorial; live availability must be verified",
-  "constraint_engine": true,
-  "preserved_zone": "Camp de Mar until 2026-08-10",
-  "new_spots": [
-    "Cala Santanyi",
-    "Cala s Almunia"
-  ],
-  "routing": {
-    "controlled_hash_navigation": true,
-    "nested_anchor_scroll_after_panel_activation": true,
-    "browser_back_forward": true,
-    "home_deeplinks_audited": true,
-    "visual_cards_actionable": true
-  },
-  "constraints_preserved": [
-    "preserve Camp de Mar until 2026-08-10",
-    "no-picnic preference"
-  ],
-  "visual_top_cards": {
-    "total": 30,
-    "actionable": 30,
-    "spot_deeplinks": 9,
-    "experience_deeplinks": 14,
-    "external_maps_fallback": 7,
-    "keyboard_accessible": true
-  }
+  "version": "2.1.0",
+  "verified_at": "2026-08-08",
+  "corpus_count": 44,
+  "collections_count": 8,
+  "duplicate_ids": [],
+  "missing_internal_targets": [],
+  "corpus_entries_without_source": [],
+  "papa_code_hash_verified_1512": true,
+  "json_files_valid": true,
+  "javascript_syntax_valid": true,
+  "files": [
+    "data/corpus.json",
+    "data/collections.json",
+    "data/source_policy.json"
+  ]
 }

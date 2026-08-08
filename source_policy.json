@@ -1,0 +1,18 @@
+{
+  "version": "2.1.0",
+  "verified_at": "2026-08-08",
+  "source_levels": {
+    "official_primary": "Page officielle/institutionnelle dédiée au lieu ou à l’expérience.",
+    "official_local": "Office de tourisme local / municipal ou organisme public local.",
+    "official_category": "Page officielle thématique ou collection, suffisante pour qualifier la famille d’expérience mais pas chaque détail local.",
+    "secondary_editorial": "Guide éditorial sérieux utilisé comme radar ou corroboration.",
+    "candidate": "Signal de découverte non encore promu."
+  },
+  "rules": [
+    "Instagram/TikTok/threads servent à découvrir des candidats, jamais à valider seuls un Must.",
+    "Un badge snorkeling, cliff-jump, famille ou autre n’est attribué que si la qualité correspondante est documentée.",
+    "must_status est éditorial Kairos et distinct du niveau de preuve.",
+    "Les disponibilités, horaires, météo, mer et réservations doivent être revérifiés au moment de l’action.",
+    "Une contrainte contextuelle peut rétrograder temporairement un lieu excellent (ex. préserver Camp de Mar avant le 10 août)."
+  ]
+}

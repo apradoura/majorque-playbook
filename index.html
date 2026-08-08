@@ -178,7 +178,7 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <a class="navbtn" href="#secrets">🔐 Papa</a>
 </nav>
 <section class="app-panel active-panel" id="dashboard">
-<div class="discover-head"><div><span class="eyebrow2">MAJORQUE · PLAYBOOK 2.0.4</span><h2>Qu’est-ce qui vous ferait kiffer ?</h2><p>Choisissez d’abord avec les yeux. Kairos vérifie ensuite trajet, météo, âge, disponibilité et contraintes réelles.</p></div><a class="btn" href="#now">⚡ Que fait-on aujourd’hui ?</a></div>
+<div class="discover-head"><div><span class="eyebrow2">MAJORQUE · PLAYBOOK 2.1.0</span><h2>Qu’est-ce qui vous ferait kiffer ?</h2><p>Choisissez d’abord avec les yeux. Kairos vérifie ensuite trajet, météo, âge, disponibilité et contraintes réelles.</p></div><a class="btn" href="#now">⚡ Que fait-on aujourd’hui ?</a></div>
 <div class="experience-entry-grid">
 <a class="experience-entry hero-entry" href="#snork-top"><img src="https://media.illesbalears.travel/rrtt-mallorca-cala-salmunia-img0.jpg" alt="Snorkeling à Majorque"><span><b>🤿 Explorer sous l’eau</b><small>Snorkeling · baptême de plongée · réserves marines</small></span></a>
 <a class="experience-entry" href="#top-adrenaline"><img src="https://media.illesbalears.travel/articulo-mallorca-turismo-activo-img0.jpg" alt="Activités adrénaline à Majorque"><span><b>🤸 Se faire peur un peu</b><small>Coasteering · canyoning · escalade · grottes</small></span></a>
@@ -188,7 +188,7 @@ body:not(.js-ready) .app section#dashboard{display:block!important}
 <a class="experience-entry" href="#territoires"><img src="https://media.illesbalears.travel/rrtt-mallorca-pueblo-valldemossa-img0.jpg" alt="Villages de Majorque"><span><b>🏘️ Explorer & comprendre</b><small>Villages · Palma · patrimoine · marchés</small></span></a>
 </div>
 <div class="collection-strip"><h3>Collections pour choisir vite</h3><div class="collection-row"><a href="#experiences">🔥 Must do</a><a href="#top-family">👀 Les enfants vont adorer</a><a href="#map">📍 À proximité</a><a href="#trips">🚗 Ça vaut le trajet</a><a href="#events">🌅 Pour aujourd’hui</a><a href="#restaurants">🍴 Bien manger</a></div></div>
-<div class="trust-card"><div><b>Base sourcée, recommandation contextualisée</b><p>Les faits viennent des sources officielles, institutionnelles ou opérateurs vérifiés. Les classements restent éditoriaux Kairos. Une disponibilité du jour n’est jamais supposée.</p></div><a href="#experiences">Voir le corpus →</a></div>
+<div class="trust-card"><div><b>Base sourcée, recommandation contextualisée</b><p>Corpus figé en JSON interne : <strong><span id="corpusCount">…</span> entités</strong>, provenance et date de vérification incluses. Les classements restent éditoriaux Kairos ; une disponibilité du jour n’est jamais supposée.</p></div><a href="#experiences">Voir le corpus →</a></div>
 <div class="update-banner" hidden="" id="updateBanner"><strong>Nouvelle version disponible.</strong><button class="btn small" id="applyUpdate">Mettre à jour maintenant</button></div>
 </section>
 <section class="app-panel" id="now">
@@ -973,5 +973,17 @@ function init(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 
-</script></body>
+</script>
+<script>
+(async()=>{
+  try{
+    const r=await fetch('./data/corpus.json',{cache:'no-store'});
+    if(!r.ok) throw new Error('corpus unavailable');
+    const c=await r.json();
+    window.KAIROS_CORPUS=c;
+    const n=document.getElementById('corpusCount'); if(n) n.textContent=String(c.count||c.entities?.length||0);
+  }catch(e){ const n=document.getElementById('corpusCount'); if(n) n.textContent='hors-ligne'; }
+})();
+</script>
+</body>
 </html>

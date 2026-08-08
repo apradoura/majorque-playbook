@@ -1,0 +1,110 @@
+{
+  "version": "2.1.0",
+  "verified_at": "2026-08-08",
+  "collections": [
+    {
+      "id": "must-mallorca",
+      "title": "Must see / must do Majorque",
+      "description": "Sélection éditoriale Kairos parmi les entités validées ; pas un classement officiel.",
+      "items": [
+        "valldemossa",
+        "deia",
+        "soller",
+        "cabrera",
+        "sa-calobra",
+        "mondrago",
+        "illa-del-toro",
+        "cala-comtessa",
+        "xp-train-soller",
+        "xp-scuba"
+      ]
+    },
+    {
+      "id": "snorkeling-documented",
+      "title": "Snorkeling documenté",
+      "items": [
+        "illa-del-toro",
+        "cabrera",
+        "llevant-marine",
+        "cala-salmunia",
+        "cala-santanyi",
+        "cala-comtessa",
+        "cala-sa-nau",
+        "cala-anguila",
+        "illetes",
+        "portals-vells"
+      ]
+    },
+    {
+      "id": "family-easy-sea",
+      "title": "Mer facile en famille",
+      "items": [
+        "cala-comtessa",
+        "illetes",
+        "cala-mendia",
+        "cala-anguila",
+        "cala-ferrera",
+        "camp-de-mar",
+        "cala-santanyi"
+      ]
+    },
+    {
+      "id": "adrenaline",
+      "title": "Adrénaline encadrée",
+      "items": [
+        "xp-coasteering",
+        "xp-canyoning",
+        "xp-caving",
+        "xp-climbing",
+        "xp-kayak"
+      ]
+    },
+    {
+      "id": "tramuntana-signature",
+      "title": "Tramuntana signature",
+      "items": [
+        "valldemossa",
+        "deia",
+        "soller",
+        "fornalutx",
+        "sa-calobra",
+        "cala-tuent",
+        "banyalbufar",
+        "estellencs"
+      ]
+    },
+    {
+      "id": "south-east-sea",
+      "title": "Sud-est mer & criques",
+      "items": [
+        "cala-santanyi",
+        "cala-salmunia",
+        "cala-llombards",
+        "mondrago",
+        "calo-des-burgit",
+        "cala-sa-nau",
+        "cala-figuera"
+      ]
+    },
+    {
+      "id": "near-paguera",
+      "title": "À portée de Paguera",
+      "items": [
+        "cala-fornells",
+        "camp-de-mar",
+        "portals-vells",
+        "cala-vinyes",
+        "illetes",
+        "cala-comtessa"
+      ]
+    },
+    {
+      "id": "north-day",
+      "title": "Journée nord",
+      "items": [
+        "pollenca",
+        "alcudia"
+      ]
+    }
+  ]
+}

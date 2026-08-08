@@ -1,3 +1,12 @@
+# 2.1.0 - Corpus figé (2026-08-08)
+
+- Ajout d'un corpus JSON interne sourcé et versionné.
+- Ajout de collections éditoriales séparées du corpus brut.
+- Ajout d'une politique de sources explicite.
+- Cache PWA étendu aux trois fichiers de données.
+- Home affiche le nombre d'entités du corpus chargé.
+- Papa conservé (code 1512, auto-lock 15 min).
+
 
 # 2.0.4 — cartes Top 5 réellement actionnables
 
